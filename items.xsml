@@ -1,0 +1,137 @@
+items: [
+    {
+        name: 'Juice Pack (6pcs)',
+        price: '₱220.00',
+        promo: 0
+    },
+    {
+        name: 'Coffee Jar',
+        price: '₱250.00',
+        promo: 0
+    },
+    {
+        name: 'Sugar (1kg)',
+        price: '₱100.00',
+        promo: 0
+    },
+    {
+        name: 'Egg (6pcs Tray)',
+        price: '₱90.00',
+        promo: 0
+    },
+    {
+        name: 'Cooking Oil',
+        price: '₱120.00',
+        promo: 0
+    },
+    {
+        name: 'Corned Beef',
+        price: '₱300.00',
+        promo: 0
+    },
+    {
+        name: 'Canned Tuna',
+        price: '₱35.00',
+        promo: 0
+    },
+    {
+        name: 'Instant noodles',
+        price: '₱25.00',
+        promo: 0
+    },
+    {
+        name: 'Fresh Milk',
+        price: '₱95.00',
+        promo: 0
+    },
+    {
+        name: 'Bearbrand Milk',
+        price: '₱335.00',
+        promo: 0
+    },
+    {
+        name: 'Nido Milk',
+        price: '₱500.00',
+        promo: 0
+    },
+    {
+        name: 'Pampers',
+        price: '₱400.00',
+        promo: 0
+    },
+    {
+        name: 'Tissue Roll',
+        price: '₱20.00',
+        promo: 0
+    },
+    {
+        name: 'Wet Wipes',
+        price: '₱30.00',
+        promo: 0
+    },
+    {
+        name: 'Biscuit',
+        price: '₱40.00',
+        promo: 0
+    },
+    {
+        name: 'Bread',
+        price: '₱70.00',
+        promo: 0
+    },
+    {
+        name: 'Cereal',
+        price: '₱200.00',
+        promo: 0
+    },
+    {
+        name: 'Colgate',
+        price: '₱70.00',
+        promo: 0
+    },
+    {
+        name: 'Shampoo (6pcs)',
+        price: '₱35.00',
+        promo: 0
+    },
+    {
+        name: 'Soap Bar',
+        price: '₱20.00',
+        promo: 0
+    },
+    {
+        name: 'Soap Box',
+        price: '₱50.00',
+        promo: 0
+    },
+    {
+        name: 'Surf Powder (2 2 kg)',
+        price: '₱220.00',
+        promo: 0
+    },
+    {
+        name: 'Surf Fabcon',
+        price: '₱280.00',
+        promo: 0
+    },
+    {
+        name: 'Jack’n Jill Chips',
+        price: '₱45.00',
+        promo: 0
+    },
+    {
+        name: 'Canned Chips',
+        price: '₱90.00',
+        promo: 0
+    },
+    {
+        name: 'Chocolate Bar',
+        price: '₱35.00',
+        promo: 0
+    },
+    {
+        name: 'Chocolate Candies (3pcs)',
+        price: '₱35.00',
+        promo: 0
+    }
+]
