@@ -6,15 +6,9 @@
         </div>
         <img v-for="(stall, index) in stalls" :key="index" class="stall stall-image" :style="stall.position"
             @click="choiceStall(index)" alt="">
+        <div class="cashier" @click="tapCart"> </div>
+        <!-- <img @click="tapCart" src="/assets/supermarket/cart.png" alt="" class="cart"> -->
         <div v-if="showTask" class=" atm-info task-content">
-            <div class="close-task" @click="closeTask">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-            </div>
             <div class="p-4 align-items-start position-relative z-1">
                 <div class="right-content d-flex flex-column gap-4">
                     <!-- Instructions Card -->
@@ -25,13 +19,23 @@
                             style="width: 10px; height: 40px; left: -14px;"></div>
 
                         <div class="card-body p-4">
+                            <div class="close-task" @click="closeTask">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
                             <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
-                                TASK 2:
+                                TASK 3:
                             </h6>
 
                             <div class="card-text text-secondary-emphasis">
                                 <p>
-                                    Your task is to budget of your assigned percentage of your money for supermarket
+                                    Your task is to budget of your assigned percentage of your money for department
+                                    store
                                     expenses.
                                 </p>
 
@@ -39,7 +43,7 @@
                                     <p class="fw-bold d-flex align-items-center gap-2 mb-2">
                                         Rewards:
                                     </p>
-                                    <p class="small mb-1">The Department Store level unlocked.</p>
+                                    <p class="small mb-1">The FastFood level unlocked.</p>
                                 </div>
                             </div>
                             <button @click="gameStart"
@@ -56,10 +60,17 @@
             <div class="row p-4 align-items-start position-relative z-1">
                 <!-- LEFT COL: Clipboard -->
                 <div class="left-content col-sm-6 col-xs-6 d-flex flex-column align-items-center">
-                    <img class="selected-stall" :src="this.stallContent.image" alt="">
-                    <div class="items-display position-absolute w-100 h-100" style="top: 0; left: 0;">
-                        <div v-for="(item, index) in stallContent.items" :key="index" class="item-hotspot"
-                            :data-index="index" @click="addToCartWithAnimation(item, $event)">
+                    <div class="stall-container position-relative">
+                        <img class="selected-stall" :src="stallContent.image" alt="Stall Image">
+                        <div class="items-display position-absolute w-100 h-100" style="top: 0; left: 0;">
+                            <div v-for="(item, index) in stallContent.items" :key="index" class="item-hotspot" :style="{
+                                top: item.top,
+                                left: item.left,
+                                width: item.width,
+                                height: item.height
+                            }" @click="addToCartWithAnimation(item, $event)">
+                                <span class="debug-label">{{ item.name }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,9 +83,11 @@
                             style="width: 10px; height: 40px; left: -14px;"></div>
 
                         <div class="card-body p-4 text-center">
-                            <img id="cart-target" src="/assets/supermarket/cart.png" alt="" style="width: 50%;">
-                            <p class="mt-2 text-muted">Items in cart: <span class="fw-bold">{{ cartItemCount
-                            }}</span></p>
+                            <img id="cart-target" src="/assets/department-store/shopping-basket.png" alt=""
+                                style="width: 50%;">
+                            <p class="mt-2 text-muted">Items in cart:
+                                <span class="fw-bold">{{ cartItemCount }}</span>
+                            </p>
                         </div>
                     </div>
                     <button @click="closeStall" class="btn btn-sm btn-primary rounded">NEXT ITEMS</button>
@@ -124,6 +137,51 @@
                 </div>
             </div>
         </div>
+        <div v-if="showQuestion" class=" atm-info task-content">
+            <div class="p-4 align-items-start position-relative z-1">
+                <div class="right-content d-flex flex-column gap-4">
+                    <!-- Instructions Card -->
+                    <div class="card border-0 shadow-lg position-relative"
+                        style="width:50%;border: 4px solid #e5e7eb; left: 25%;">
+                        <!-- Visual tab on left -->
+                        <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
+                            style="width: 10px; height: 40px; left: -14px;"></div>
+
+                        <div class="card-body p-4"> <span class="badge bg-danger float-end"
+                                @click="closeQuestion">X</span>
+                            <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
+                                PROMO QUESTION
+                            </h6>
+
+                            <div class="card-text text-secondary-emphasis">
+                                <p>
+                                    A {{ promoQuestion.name }} costs ₱{{ promoQuestion.price }}. The Department Store
+                                    gives a
+                                    <b>
+                                        {{ promoQuestion.promo * 100 }}% discount</b>. <br> What is the new price?
+                                </p>
+
+                                <div class="form-group">
+                                    <input type="text" v-model="answer" class="form-control border border-primary">
+                                </div>
+                                <template v-if="questionError.show">
+                                    <div class="alert alert-danger border-start border-danger border rounded mt-2 ">
+                                        <span class="badge bg-danger float-end"
+                                            @click="questionError.show = false">X</span>
+                                        <p class="small mb-1">{{ questionError.message }}</p>
+                                    </div>
+                                </template>
+                            </div>
+                            <button @click="submitAnswer"
+                                class="btn btn-sm btn-info w-100 rounded mt-1 text-white fw-bold">
+                                SUBMIT ANSWER
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
     <div v-if="showReceipt" class="cash-receipt-overlay">
         <div class="cash-receipt-container">
@@ -162,9 +220,10 @@
 </template>
 <script>
 import Navbar from '../Navbar.vue';
-
+import { storeGameProgress, fetchGameProgress } from '../../controller';
+import { updateCoins, completeBuilding } from '../../gameProgress.service';
 export default {
-    name: 'Supermarket',
+    name: 'DepartmentStore',
     components: {
         Navbar,
     },
@@ -175,266 +234,112 @@ export default {
             showTerminal: false,
             showStalls: false,
             showCart: false,
-            building: 'SuperMarket',
+            building: 'Department Store',
             stallContent: [],
             stalls: [{
-                image: '/assets/supermarket/stall-1.png',
-                position: 'bottom: 5%; left: 10%;z-index:1;',
+                image: '/assets/department-store/stall-1.png',
+                position: 'bottom: 1%; left: 23%;z-index:1; ',
                 items: [
-                    {
-                        code: 11,
-                        name: 'Juice Pack (6pcs)',
-                        price: 220.00,
-                        promo: 0,
-                        question: 'A bottle of orange juice costs ₱220. The supermarket gives a <b> 20% discount<b>. What is the new price?',
-                        answer: 176,
-                        image: '/assets/supermarket/items/item-11.png'
-                    },
-                    {
-                        code: 12,
-                        name: 'Coffee Jar',
-                        price: 250.00,
-                        promo: 0,
-                        image: '/assets/supermarket/items/item-12.png'
-                    },
-                    {
-                        code: 13,
-                        name: 'Sugar (1kg)',
-                        price: 100.00,
-                        promo: 0
-                    },
-                    {
-                        code: 13,
-                        name: 'Sugar (1kg)',
-                        price: 100.00,
-                        promo: 0
-                    },
-                    {
-                        code: 14,
-                        name: 'Egg (6pcs Tray)',
-                        price: 90.00,
-                        promo: 0
-                    },
-                    {
-                        code: 14,
-                        name: 'Egg (6pcs Tray)',
-                        price: 90.00,
-                        promo: 0
-                    },
+                    { code: 101, name: 'Eyeshadow Palette (Large)', price: 395.00, promo: 0, top: '13%', left: '5%', width: '40%', height: '12%' },
+                    { code: 102, name: 'Eyeshadow Palette (Small)', price: 245.00, promo: 0, top: '13%', left: '55%', width: '40%', height: '12%' },
+                    { code: 103, name: 'Liquid Blush', price: 395.00, promo: 0, top: '28%', left: '5%', width: '25%', height: '13%' },
+                    { code: 104, name: 'Lip Tint', price: 175.00, promo: 0, top: '28%', left: '33%', width: '30%', height: '13%' },
+                    { code: 105, name: 'Lip Gloss', price: 225.00, promo: 0, top: '28%', left: '65%', width: '30%', height: '13%' },
+                    { code: 106, name: 'Face Serum', price: 470.00, promo: 0, top: '44%', left: '5%', width: '25%', height: '13%' },
+                    { code: 107, name: 'Foundation', price: 259.00, promo: 0, top: '44%', left: '33%', width: '30%', height: '13%' },
+                    { code: 108, name: 'Concealer', price: 195.00, promo: 0, top: '44%', left: '65%', width: '30%', height: '13%' },
+                    { code: 109, name: 'Face Cream', price: 175.00, promo: 0, top: '60%', left: '5%', width: '35%', height: '13%' },
+                    { code: 110, name: 'Face Toner', price: 145.00, promo: 0, top: '60%', left: '42%', width: '25%', height: '13%' },
+                    { code: 111, name: 'Face Mist', price: 150.00, promo: 0, top: '60%', left: '70%', width: '25%', height: '13%' },
+                    { code: 112, name: 'Skincare Set', price: 300.00, promo: 0.10, top: '78%', left: '5%', width: '90%', height: '18%', }
                 ]
             },
             {
-                image: '/assets/supermarket/stall-2.png',
-                position: 'bottom: 5%; left: 35%;z-index:1;',
+                image: '/assets/department-store/stall-2.png',
+                position: 'bottom: 1%; left: 51%;z-index:1;',
                 items: [
-                    {
-                        code: 21,
-                        name: 'Cooking Oil',
-                        price: 120.00,
-                        promo: 0
-                    },
-                    {
-                        code: 22,
-                        name: 'Corned Beef',
-                        price: 300.00,
-                        promo: 0
-                    },
-                    {
-                        code: 22,
-                        name: 'Corned Beef',
-                        price: 300.00,
-                        promo: 0
-                    },
-                    {
-                        code: 23,
-                        name: 'Canned Tuna',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 24,
-                        name: 'Instant noodles',
-                        price: 25.00,
-                        promo: 0
-                    },
-                    {
-                        code: 24,
-                        name: 'Instant noodles',
-                        price: 25.00,
-                        promo: 0
-                    },
+                    { code: 201, name: 'Perfume', price: 1755.00, promo: 0.20, top: '10%', left: '5%', width: '90%', height: '18%' },
+                    { code: 202, name: 'Bag 1 (Pink)', price: 300.00, promo: 0, top: '28%', left: '5%', width: '28%', height: '18%' },
+                    { code: 203, name: 'Bag 2 (Peach)', price: 500.00, promo: 0, top: '28%', left: '36%', width: '28%', height: '18%' },
+                    { code: 204, name: 'Bag 3 (Quilted)', price: 700.00, promo: 0, top: '28%', left: '67%', width: '28%', height: '18%' },
+                    { code: 205, name: 'Coin Purse', price: 200.00, promo: 0, top: '48%', left: '5%', width: '28%', height: '15%' },
+                    { code: 206, name: 'Women Wallet', price: 250.00, promo: 0, top: '48%', left: '36%', width: '28%', height: '15%' },
+                    { code: 207, name: 'Men Wallet', price: 150.00, promo: 0, top: '48%', left: '67%', width: '28%', height: '15%' },
+                    { code: 208, name: 'Scarf 1 (Striped)', price: 400.00, promo: 0, top: '63%', left: '5%', width: '28%', height: '15%' },
+                    { code: 209, name: 'Scarf 2 (Yellow)', price: 350.00, promo: 0, top: '63%', left: '36%', width: '28%', height: '15%' },
+                    { code: 210, name: 'Scarf 3 (Red)', price: 450.00, promo: 0, top: '63%', left: '67%', width: '28%', height: '15%' },
+                    { code: 211, name: 'Cap 1 (Grey)', price: 395.00, promo: 0, top: '78%', left: '5%', width: '28%', height: '12%' },
+                    { code: 212, name: 'Cap 2 (Pink)', price: 345.00, promo: 0, top: '78%', left: '36%', width: '28%', height: '12%' },
+                    { code: 213, name: 'Cap 3 (Blue)', price: 295.00, promo: 0, top: '78%', left: '67%', width: '28%', height: '12%' },
+                    { code: 214, name: 'Belts', price: 145.00, promo: 0, top: '90%', left: '5%', width: '90%', height: '8%' }
                 ]
             },
             {
-                image: '/assets/supermarket/stall-3.png',
-                position: 'bottom: 5%; left: 60%;z-index:1;',
+                image: '/assets/department-store/stall-3.png',
+                position: 'bottom: 1%; left: 69%; z-index:1;',
                 items: [
-                    {
-                        code: 31,
-                        name: 'Fresh Milk',
-                        price: 95.00,
-                        promo: 0
-                    },
-                    {
-                        code: 32,
-                        name: 'Bearbrand Milk',
-                        price: 335.00,
-                        promo: 0
-                    },
-                    {
-                        code: 33,
-                        name: 'Nido Milk',
-                        price: 500.00,
-                        promo: 0
-                    },
-                    {
-                        code: 34,
-                        name: 'Pampers',
-                        price: 400.00,
-                        promo: 0
-                    },
-                    {
-                        code: 35,
-                        name: 'Tissue Roll',
-                        price: 20.00,
-                        promo: 0
-                    },
-                    {
-                        code: 36,
-                        name: 'Wet Wipes',
-                        price: 30.00,
-                        promo: 0
-                    },
+                    { code: 301, name: 'Socks Set 1', price: 245.00, promo: 0, top: '12%', left: '5%', width: '40%', height: '12%' },
+                    { code: 302, name: 'Socks Set 2', price: 245.00, promo: 0, top: '12%', left: '55%', width: '40%', height: '12%' },
+                    { code: 303, name: 'Yellow Slipper', price: 200.00, promo: 0, top: '25%', left: '5%', width: '28%', height: '15%' },
+                    { code: 304, name: 'Blue Slipper', price: 200.00, promo: 0, top: '25%', left: '36%', width: '28%', height: '15%' },
+                    { code: 305, name: 'Green Slipper', price: 200.00, promo: 0, top: '25%', left: '67%', width: '28%', height: '15%' },
+                    { code: 306, name: 'Red Sneakers', price: 2995.00, promo: 0.50, top: '42%', left: '5%', width: '28%', height: '18%' },
+                    { code: 307, name: 'Blue High Top', price: 2995.00, promo: 0.80, top: '42%', left: '36%', width: '28%', height: '18%' },
+                    { code: 308, name: 'Blue Low Top', price: 2300.00, promo: 0.80, top: '42%', left: '67%', width: '28%', height: '18%' },
+                    { code: 309, name: 'Red Heels', price: 1500.00, promo: 0.10, top: '60%', left: '5%', width: '28%', height: '18%' },
+                    { code: 310, name: 'Black Heels', price: 45.00, promo: 0.10, top: '60%', left: '36%', width: '28%', height: '18%' },
+                    { code: 311, name: 'Pink Heels', price: 995.00, promo: 0.10, top: '60%', left: '67%', width: '28%', height: '18%' },
+                    { code: 312, name: 'Yellow Boots', price: 1450.00, promo: 0.10, top: '78%', left: '5%', width: '28%', height: '20%' },
+                    { code: 313, name: 'Brown Boots', price: 1300.00, promo: 0.10, top: '78%', left: '36%', width: '28%', height: '20%' },
+                    { code: 314, name: 'Pink Boots', price: 600.00, promo: 0.10, top: '78%', left: '67%', width: '28%', height: '20%' }
                 ]
             },
             {
-                image: '/assets/supermarket/stall-4.png',
-                position: 'bottom: 20%; left: 20%;',
+                image: '/assets/department-store/stall-4.png',
+                position: 'top: 10%; left: 3%;z-index:1;',
                 items: [
-                    {
-                        code: 41,
-                        name: 'Biscuit',
-                        price: 40.00,
-                        promo: 0
-                    },
-                    {
-                        code: 41,
-                        name: 'Biscuit',
-                        price: 40.00,
-                        promo: 0
-                    },
-                    {
-                        code: 42,
-                        name: 'Bread',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 42,
-                        name: 'Bread',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 43,
-                        name: 'Cereal',
-                        price: 200.00,
-                        promo: 0
-                    },
-                    {
-                        code: 43,
-                        name: 'Cereal',
-                        price: 200.00,
-                        promo: 0
-                    }
+                    { code: 501, name: 'Tops 1 (Yellow)', price: 200.00, promo: 0, top: '30%', left: '5%', width: '22%', height: '25%' },
+                    { code: 502, name: 'Tops 2 (Pink/Brown)', price: 250.00, promo: 0, top: '30%', left: '28%', width: '18%', height: '25%' },
+                    { code: 503, name: 'Blouse (Peach/Purple)', price: 275.00, promo: 0, top: '30%', left: '46%', width: '25%', height: '25%' },
+                    { code: 504, name: 'Dress (White/Black/Red)', price: 350.00, promo: 0, top: '30%', left: '72%', width: '23%', height: '45%' },
+                    { code: 505, name: 'Folded Shirts (Left Stack)', price: 150.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
+                    { code: 506, name: 'Folded Shirts (Middle Stack)', price: 150.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
+                    { code: 507, name: 'Folded Shirts (Right Stack)', price: 150.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' }
                 ]
             },
             {
-                image: '/assets/supermarket/stall-5.png',
-                position: 'bottom: 20%; left: 45%;',
+                image: '/assets/department-store/stall-5.png',
+                position: 'top: 5%; left: 43%;z-index:1;',
                 items: [
-                    {
-                        code: 51,
-                        name: 'Colgate',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 52,
-                        name: 'Shampoo (6pcs)',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 53,
-                        name: 'Soap Bar',
-                        price: 20.00,
-                        promo: 0
-                    },
-                    {
-                        code: 54,
-                        name: 'Soap Box',
-                        price: 50.00,
-                        promo: 0
-                    },
-                    {
-                        code: 55,
-                        name: 'Surf Powder (2 kg)',
-                        price: 220.00,
-                        promo: 0
-                    },
-                    {
-                        code: 56,
-                        name: 'Surf Fabcon',
-                        price: 280.00,
-                        promo: 0
-                    },
+                    { code: 601, name: 'Shirt', price: 380.00, promo: 0.10, top: '28%', left: '5%', width: '35%', height: '30%' },
+                    { code: 602, name: 'Hoodie', price: 200.00, promo: 0, top: '28%', left: '40%', width: '20%', height: '30%' },
+                    { code: 603, name: 'Long Sleeve / Suit', price: 450.00, promo: 0, top: '28%', left: '62%', width: '33%', height: '33%' },
+                    { code: 604, name: 'Folded Shirts (Left)', price: 120.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
+                    { code: 605, name: 'Folded Shirts (Middle)', price: 120.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
+                    { code: 606, name: 'Folded Shirts (Right)', price: 120.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' }
                 ]
             }, {
-                image: '/assets/supermarket/stall-6.png',
-                position: 'bottom: 20%; left: 70%;',
+                image: '/assets/department-store/stall-6.png',
+                position: 'top:5%; left: 65%;z-index:1;',
                 items: [
-                    {
-                        code: 61,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 62,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 63,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 64,
-                        name: 'Canned Chips',
-                        price: 90.00,
-                        promo: 0
-                    },
-                    {
-                        code: 65,
-                        name: 'Chocolate Bar',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 66,
-                        name: 'Chocolate Candies (3pcs)',
-                        price: 35.00,
-                        promo: 0
-                    }
+                    { code: 401, name: 'Long Skirts', price: 500.00, promo: 0.20, top: '22%', left: '3%', width: '48%', height: '35%' },
+                    { code: 402, name: 'Pants', price: 1700.00, promo: 0, top: '22%', left: '50%', width: '45%', height: '35%' },
+                    { code: 403, name: 'Women\'s Short', price: 400.00, promo: 0, top: '58%', left: '5%', width: '30%', height: '18%' },
+                    { code: 404, name: 'Skirts', price: 500.00, promo: 0, top: '58%', left: '36%', width: '28%', height: '18%' },
+                    { code: 405, name: 'Men\'s Pants', price: 700.00, promo: 0, top: '58%', left: '65%', width: '30%', height: '22%' }
                 ]
             }],
             shoppingCart: [],
             showReceipt: false,
-            message: null
+            message: null,
+            showQuestion: false,
+            promoQuestion: [],
+            setEvent: null,
+            questionError: {
+                show: false,
+                message: null
+            },
+            answer: null
         }
     },
     computed: {
@@ -450,31 +355,51 @@ export default {
         },
         cartTotal() {
             return this.totalCount.totalAmount
+        },
+        expectedBudget() {
+            const budgetPlan = localStorage.getItem('budgetPlan')
+            const plan = JSON.parse(budgetPlan);
+            const budget = plan.find(item => item.name === this.building);
+            return budget.amount
         }
     },
     methods: {
-        nextGame() {
-            const coin = localStorage.getItem('coin')
+        async nextGame() {
+            // Deduct coins
+            updateCoins(this.cartTotal);
+
+            // Complete current building based on route
+            completeBuilding(this.$route.path, '/building/fastfood');
+
+            // Sync progress
+            await storeGameProgress();
+            await fetchGameProgress();
+
+            // Return to map
+            this.$router.push('/map');
+            /* const coin = localStorage.getItem('coin')
             const totalCoin = coin - this.cartTotal
             localStorage.setItem('coin', totalCoin)
             let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');
-            const current = buildings.find(item => item.name === 'Supermarket');
-            const next = buildings.find(item => item.name === 'Department Store');
+            const current = buildings.find(item => item.name === 'Department Store');
+            const next = buildings.find(item => item.name === 'Restaurant');
             if (current) {
                 current.isLocked = true;
                 current.isDone = true;
                 next.isLocked = false
             }
             localStorage.setItem('buildings', JSON.stringify(buildings));
+            await storeGameProgress();
             // Navigate to the next page after the last instruction
-            this.$router.push('/map');
+            await fetchGameProgress()
+            this.$router.push('/map'); */
         },
         choiceStall(stall) {
             if (this.isReadTask) {
                 this.showStalls = true
                 this.stallContent = this.stalls[stall]
             } else {
-                this.message = "Select the Cart"
+                this.message = "Select the Cashier for the Instruction"
                 setTimeout(() => {
                     this.message = null;
                 }, 2000);
@@ -510,7 +435,12 @@ export default {
                 showMessage("Please read the task first! Click the cart to start.");
                 return;
             }
-
+            if (item.promo != 0) {
+                this.promoQuestion = item
+                this.setEvent = event
+                this.showQuestion = true
+                return;
+            }
             const cartPos = this.getCartPosition();
             if (!cartPos) {
                 console.error("Cart target not found for animation.");
@@ -625,27 +555,70 @@ export default {
                 this.showMessage("Your cart is empty! Add some items first.");
                 return;
             }
-            const budgetPlan = localStorage.getItem('budgetPlan')
-            if (budgetPlan) {
-                const plan = JSON.parse(budgetPlan);
-                const budget = plan.find(item => item.name === 'Supermarket');
-                const expectedBudget = localStorage.getItem('coin') * (budget.percent / 100)
-                console.log(expectedBudget)
-                if (this.cartTotal == expectedBudget) {
-                    this.showCart = false; // 
-                    this.showReceipt = true; // 
+            if (this.expectedBudget != this.cartTotal) {
+                if (this.expectedBudget < this.cartTotal) {
+                    this.showMessage('Add More Items')
+                    return;
                 } else {
                     this.showMessage('You have exceeded your grocery budget')
-
+                    return;
                 }
             }
-
+            this.showCart = false; // 
+            this.showReceipt = true; // 
         },
         showMessage(text) {
             this.message = text;
             setTimeout(() => {
                 this.message = null;
             }, 2000);
+        },
+        submitAnswer() {
+            console.log(this.promoQuestion)
+            const price = this.promoQuestion.price
+            const promo = this.promoQuestion.promo
+            const rAnswer = price - (price * promo)
+            console.log(price * promo)
+            console.log(rAnswer)
+            if (rAnswer != this.answer) {
+                this.questionError.message = 'Wrong answer try again'
+                this.questionError.show = true
+                this.answer = ''
+            } else {
+                // this.promoQuestion.price = rAnswer
+                const findItem = this.shoppingCart.find(itemCart => itemCart.code === this.promoQuestion.code);
+                if (findItem) {
+                    findItem.quantity += 1
+                } else {
+                    const storeItem = {
+                        code: this.promoQuestion.code,
+                        name: this.promoQuestion.name,
+                        quantity: 1,
+                        price: rAnswer,
+                    }
+                    this.shoppingCart.push(storeItem);
+                }
+                // Simple visual feedback on the cart icon
+                const cartEl = document.getElementById('cart-target');
+                if (cartEl) {
+                    cartEl.style.transition = 'transform 0.1s';
+                    cartEl.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        cartEl.style.transform = 'scale(1)';
+                    }, 100);
+                }
+                this.closeQuestion()
+            }
+        },
+        closeQuestion() {
+            this.showQuestion = false
+            this.promoQuestion = []
+            this.setEvent = null
+            this.questionError = {
+                show: false,
+                message: null
+            }
+            this.answer = null
         }
     }
 }
@@ -682,14 +655,16 @@ export default {
 }
 
 .stall-image {
-    width: 20%;
+    width: 15%;
+    height: 30%;
 }
 
-.cart {
+.cashier {
     position: absolute;
-    bottom: 10px;
-    right: 20px;
-    width: 20%;
+    bottom: 5px;
+    left: 10px;
+    width: 15%;
+    height: 17%;
     z-index: 2;
 }
 
@@ -712,18 +687,66 @@ export default {
     z-index: 7;
 }
 
-.stall-content {
-    margin: 10px;
-    border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.8);
-    position: absolute;
-    width: 98%;
-    height: 95%;
-    z-index: 7;
+.stall-container {
+    width: 55%;
+    /* Match your image width */
+    margin: auto;
 }
 
 .selected-stall {
-    width: 70%;
+    width: 100%;
+    /* Fill the container */
+    display: block;
+}
+
+.items-display {
+    pointer-events: none;
+}
+
+.item-hotspot {
+    position: absolute;
+    cursor: pointer;
+    pointer-events: auto;
+    background-color: rgba(255, 0, 0, 0.1);
+    /* Slightly red so you can see it while testing */
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.item-hotspot:active {
+    transform: scale(0.95);
+    /* Mobile-friendly feedback */
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.debug-label {
+    font-size: 8px;
+    color: white;
+    pointer-events: none;
+    /* Make sure text doesn't block the click */
+    opacity: 0.5;
+}
+
+.close-task {
+    background-color: red;
+    position: absolute;
+    z-index: 7;
+    right: 3%;
+    top: 5%;
+    font-size: 24px;
+    border-radius: 10%;
+    /* Size of the X */
+    line-height: 1;
+    color: #ffffff;
+    /* Dark Grey */
+    cursor: pointer;
+    padding: 0 6px;
+    transition: color 0.2s ease;
+}
+
+.close-task:hover {
+    color: #ff0000;
+    /* Red on hover */
 }
 
 /* --- ITEM HOTSPOT STYLING --- */
@@ -733,66 +756,7 @@ export default {
     /* Allows clicks to pass through by default */
 }
 
-.item-hotspot {
-    position: absolute;
-    cursor: pointer;
-    pointer-events: auto;
-    /* Only the hotspots are clickable */
-    background-color: rgba(255, 255, 255, 0.2);
-    /* Invisible-ish clickable area */
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.item-hotspot:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Specific positioning for items on the PLACHOLDER stall image (adjust these based on your actual image!) */
-.item-hotspot[data-index="0"] {
-    top: 10%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="1"] {
-    top: 22%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="2"] {
-    top: 35%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="3"] {
-    top: 48%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="4"] {
-    top: 58%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="5"] {
-    top: 74%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
 
 /* --- ANIMATION CLASS (CRITICAL) --- */
 .animating-clone {
@@ -848,12 +812,13 @@ export default {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .cash-receipt-container {
     width: 380px;
     /* Fixed width */
-    max-height: 90vh;
+    max-height: 1000vh;
     /* Limit the maximum height of the entire receipt on screen */
     background-color: #fdfdfd;
     /* Off-white receipt paper */

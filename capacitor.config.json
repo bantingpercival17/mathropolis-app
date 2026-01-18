@@ -1,5 +1,8 @@
 {
   "appId": "mathrolopis.app",
   "appName": "Mathropolis",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http"
+  }
 }

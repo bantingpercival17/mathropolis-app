@@ -41,14 +41,14 @@ export default {
             {
                 name: "Supermarket",
                 route: "building/supermarket",
-                style: "top: 14%; left: 23%; width: 15%; height: 20%;",
+                style: "top: 14%; left: 23%; width: 15%; height: 20%; z-index:2",
                 isLocked: true,
                 isDone: null,
             },
             {
                 name: "Restaurant",
                 route: "building/fastfood",
-                style: "top: 15%; left: 56%; width: 15%; height: 20%;",
+                style: "top: 15%; left: 56%; width: 15%; height: 20%; z-index:2",
                 isLocked: true,
                 isDone: null
             },
@@ -117,8 +117,9 @@ export default {
                 const formData = new FormData()
                 formData.append('username', this.username)
                 formData.append('password', this.password)
+                //const response = await login(formData)
                 const response = await axios.post('/login', formData)
-                console.log("Login successful:", response.data)
+                console.log('Login success:', response.data)
                 // Save account data to localStorage
                 const { username } = response.data
                 localStorage.setItem('account', JSON.stringify(response.data))
@@ -138,7 +139,8 @@ export default {
                     this.showMessage(error.response.data.message)
                     return
                 }
-                this.showMessage("Login failed:" + error.message)
+                this.showMessage("Login failed:" + error + ' - ' + axios.defaults.baseURL)
+                console.log(axios.defaults.baseURL)
             } finally {
                 this.loader = false
             }

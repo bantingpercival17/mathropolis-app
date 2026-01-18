@@ -30,7 +30,7 @@
                         @click="openWithdraw = false">BACK</button>
                 </div>
             </div>
-            <div v-if="taskContent" style="width: 100%; height: 100%;" class=" atm-info ">
+            <div v-if="taskContent" style="width: 100%; height: 100%; z-index: 2;" class=" atm-info ">
                 <div class="close-task" @click="closeTask">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
@@ -220,7 +220,7 @@
     </div>
 </template>
 <script>
-import { storeGameProgress } from '../../controller';
+import { storeGameProgress, fetchGameProgress } from '../../controller';
 import Navbar from '../Navbar.vue';
 
 export default {
@@ -230,11 +230,11 @@ export default {
     },
     data() {
         const categories = [
-            { id: 1, name: 'Supermarket', percent: 50 },
-            { id: 2, name: 'Department Store', percent: 10 },
-            { id: 3, name: 'Restaurant', percent: 20 },
-            { id: 4, name: 'Online Subscription', percent: 10 },
-            { id: 5, name: 'Leisure', percent: 10 },
+            { id: 1, name: 'Supermarket', percent: 50, amount: 2500 },
+            { id: 2, name: 'Department Store', percent: 10, amount: 500 },
+            { id: 3, name: 'Restaurant', percent: 20, amount: 1000 },
+            { id: 4, name: 'Online Subscription', percent: 10, amount: 500 },
+            { id: 5, name: 'Leisure', percent: 10, amount: 500 },
         ]
         return {
             coin: 0.00,
@@ -367,6 +367,7 @@ export default {
             }
             // 3️⃣ Apply update
             this.categories[index].percent = newValue;
+            this.categories[index].amount = (5000 * (newValue / 100))
             // 4️⃣ Update total
             this.totalPercent = totalAfter;
         },
@@ -398,7 +399,8 @@ export default {
             localStorage.setItem('buildings', JSON.stringify(buildings));
             await storeGameProgress();
             // Navigate to the next page after the last instruction
-            this.navigateTo('/map');
+            await fetchGameProgress()
+            this.$router.push('/map');
         },
         closeTask() {
             this.taskContent = false
@@ -416,7 +418,7 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 .mia-position {
@@ -638,6 +640,7 @@ export default {
 
     .right-content {
         font-size: x-small;
+
     }
 
     .left-content {

@@ -1,6 +1,6 @@
 <template>
     <div class="supermarket-container supermarket-bg">
-        <Navbar budgetName="Supermarket" store="true" />
+        <Navbar :budgetName="building" :store="true" :tools="enabledTools" :coins="coin" />
         <div v-if="message" class="message-box bg-warning text-dark">
             {{ message }}
         </div>
@@ -9,14 +9,6 @@
         <img @click="tapCart" src="/assets/supermarket/cart.png" alt="" class="cart">
         <img src="/assets/supermarket/terminal.png" alt="" class="terminal">
         <div v-if="showTask" class=" atm-info task-content">
-            <div class="close-task" @click="closeTask">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-            </div>
             <div class="p-4 align-items-start position-relative z-1">
                 <div class="right-content d-flex flex-column gap-4">
                     <!-- Instructions Card -->
@@ -27,6 +19,15 @@
                             style="width: 10px; height: 40px; left: -14px;"></div>
 
                         <div class="card-body p-4">
+                            <div class="close-task" @click="closeTask">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
                             <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
                                 TASK 2:
                             </h6>
@@ -76,12 +77,52 @@
                         <div class="card-body p-4 text-center">
                             <img id="cart-target" src="/assets/supermarket/cart.png" alt="" style="width: 50%;">
                             <p class="mt-2 text-muted">Items in cart: <span class="fw-bold">{{ cartItemCount
-                            }}</span></p>
+                                    }}</span></p>
                         </div>
                     </div>
                     <button @click="closeStall" class="btn btn-sm btn-primary rounded">NEXT ITEMS</button>
                 </div>
             </div>
+        </div>
+        <div v-if="showQuestion" class=" atm-info task-content">
+            <div class="p-4 align-items-start position-relative z-1">
+                <div class="right-content d-flex flex-column gap-4">
+                    <!-- Instructions Card -->
+                    <div class="card border-0 shadow-lg position-relative"
+                        style="width:50%;border: 4px solid #e5e7eb; left: 25%;">
+                        <!-- Visual tab on left -->
+                        <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
+                            style="width: 10px; height: 40px; left: -14px;"></div>
+
+                        <div class="card-body p-4"> <span class="badge bg-danger float-end"
+                                @click="closeQuestion">X</span>
+                            <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
+                                PROMO QUESTION
+                            </h6>
+
+                            <div class="card-text text-secondary-emphasis">
+                                <p v-html="promoQuestion.question"></p>
+
+                                <div class="form-group">
+                                    <input type="text" v-model="answer" class="form-control border border-primary">
+                                </div>
+                                <template v-if="questionError.show">
+                                    <div class="alert alert-danger border-start border-danger border rounded mt-2 ">
+                                        <span class="badge bg-danger float-end"
+                                            @click="questionError.show = false">X</span>
+                                        <p class="small mb-1">{{ questionError.message }}</p>
+                                    </div>
+                                </template>
+                            </div>
+                            <button @click="submitAnswer"
+                                class="btn btn-sm btn-info w-100 rounded mt-1 text-white fw-bold">
+                                SUBMIT ANSWER
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div v-if="showCart" class="cart-items">
             <div class="card shadow cart-items-content">
@@ -96,7 +137,8 @@
                             class="d-flex justify-content-between align-items-center bg-light rounded-3">
                             <div>
                                 <span class="fw-bold">{{ cartItem.quantity }}x {{ cartItem.name }}</span>
-                                <br><small class="text-muted">
+                                <br>
+                                <small class="text-muted">
                                     @ ₱{{ cartItem.price.toFixed(2) }}
                                 </small>
                             </div>
@@ -164,7 +206,8 @@
 </template>
 <script>
 import Navbar from '../Navbar.vue';
-
+import { storeGameProgress, fetchGameProgress } from '../../controller';
+import { updateCoins, completeBuilding } from '../../gameProgress.service';
 export default {
     name: 'Supermarket',
     components: {
@@ -177,7 +220,7 @@ export default {
             showTerminal: false,
             showStalls: false,
             showCart: false,
-            building: 'SuperMarket',
+            building: 'Supermarket',
             stallContent: [],
             stalls: [{
                 image: '/assets/supermarket/stall-1.png',
@@ -188,7 +231,7 @@ export default {
                         name: 'Juice Pack (6pcs)',
                         price: 220.00,
                         promo: 0,
-                        question: 'A bottle of orange juice costs ₱220. The supermarket gives a <b> 20% discount<b>. What is the new price?',
+                        question: 'A bottle of orange juice costs ₱220. The supermarket gives a <b> 20% discount</b>.<br> What is the new price?',
                         answer: 176,
                         image: '/assets/supermarket/items/item-11.png'
                     },
@@ -239,13 +282,15 @@ export default {
                         code: 22,
                         name: 'Corned Beef',
                         price: 300.00,
-                        promo: 0
+                        promo: 0.12,
+                        question: 'A pack of Corned Beef costs ₱300. The supermarket gives a <b> 12% discount</b>. <br> What is the new price?',
                     },
                     {
                         code: 22,
                         name: 'Corned Beef',
                         price: 300.00,
-                        promo: 0
+                        promo: 0.12,
+                        question: 'A pack of Corned Beef costs ₱300. The supermarket gives a <b> 12% discount</b>. <br>What is the new price?',
                     },
                     {
                         code: 23,
@@ -430,16 +475,38 @@ export default {
                         code: 66,
                         name: 'Chocolate Candies (3pcs)',
                         price: 35.00,
-                        promo: 0
+                        promo: 0.05,
+                        question: 'A pack of Chocolate Candies costs ₱35. The supermarket gives a <b> 5% discount</b>. What is the new price?',
                     }
                 ]
             }],
             shoppingCart: [],
             showReceipt: false,
-            message: null
+            message: null,
+            showQuestion: false,
+            promoQuestion: [],
+            setEvent: null,
+            questionError: {
+                show: false,
+                message: null
+            },
+            answer: null
         }
     },
     computed: {
+        enabledTools() {
+            try {
+                const buildings = JSON.parse(localStorage.getItem('buildings')) ?? [];
+                return Object.fromEntries(
+                    buildings.map(({ name, isDone }) => [name, !!isDone])
+                );
+            } catch {
+                return {};
+            }
+        },
+        coin() {
+            return localStorage.getItem('coin') ?? 0;
+        },
         totalCount() {
             return this.shoppingCart.reduce((acc, item) => {
                 acc.totalQuantity += item.quantity;
@@ -455,8 +522,20 @@ export default {
         }
     },
     methods: {
-        nextGame() {
-            const coin = localStorage.getItem('coin')
+        async nextGame() {
+            // Deduct coins
+            updateCoins(this.cartTotal);
+
+            // Complete current building based on route
+            completeBuilding(this.$route.path, '/building/department-store');
+
+            // Sync progress
+            await storeGameProgress();
+            await fetchGameProgress();
+
+            // Return to map
+            this.$router.push('/map');
+            /* const coin = localStorage.getItem('coin')
             const totalCoin = coin - this.cartTotal
             localStorage.setItem('coin', totalCoin)
             let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');
@@ -468,8 +547,10 @@ export default {
                 next.isLocked = false
             }
             localStorage.setItem('buildings', JSON.stringify(buildings));
+            await storeGameProgress();
             // Navigate to the next page after the last instruction
-            this.$router.push('/map');
+            await fetchGameProgress();
+            this.$router.push('/map'); */
         },
         choiceStall(stall) {
             if (this.isReadTask) {
@@ -507,18 +588,41 @@ export default {
                 y: rect.top + rect.height / 2 // Center Y
             };
         },
-        addToCartWithAnimation(item, event) {
+        addToCart(item, event) {
             if (!this.isReadTask) {
                 showMessage("Please read the task first! Click the cart to start.");
                 return;
             }
-
+            if (item.promo != 0) {
+                this.showMessage("Have A promo");
+                this.promoQuestion = item
+                this.setEvent = event
+                this.showQuestion = true
+                return;
+            }
             const cartPos = this.getCartPosition();
             if (!cartPos) {
                 console.error("Cart target not found for animation.");
                 return;
             }
-
+            this.addToCartWithAnimation(item, event)
+        },
+        addToCartWithAnimation(item, event) {
+            if (!this.isReadTask) {
+                showMessage("Please read the task first! Click the cart to start.");
+                return;
+            }
+            if (item.promo != 0) {
+                this.promoQuestion = item
+                this.setEvent = event
+                this.showQuestion = true
+                return;
+            }
+            const cartPos = this.getCartPosition();
+            if (!cartPos) {
+                console.error("Cart target not found for animation.");
+                return;
+            }
             const startEl = event.currentTarget; // The clicked hotspot div
             const startRect = startEl.getBoundingClientRect();
 
@@ -637,8 +741,11 @@ export default {
                     this.showCart = false; // 
                     this.showReceipt = true; // 
                 } else {
-                    this.showMessage('You have exceeded your grocery budget')
-
+                    if (this.cartTotal < expectedBudget) {
+                        this.showMessage('Add More Items')
+                    } else {
+                        this.showMessage('You have exceeded your grocery budget')
+                    }
                 }
             }
 
@@ -648,6 +755,53 @@ export default {
             setTimeout(() => {
                 this.message = null;
             }, 2000);
+        },
+        submitAnswer() {
+            console.log(this.promoQuestion)
+            const price = this.promoQuestion.price
+            const promo = this.promoQuestion.promo
+            const rAnswer = price - (price * promo)
+            console.log(price * promo)
+            console.log(rAnswer)
+            if (rAnswer != this.answer) {
+                this.questionError.message = 'Wrong answer try again'
+                this.questionError.show = true
+                this.answer = ''
+            } else {
+                // this.promoQuestion.price = rAnswer
+                const findItem = this.shoppingCart.find(itemCart => itemCart.code === this.promoQuestion.code);
+                if (findItem) {
+                    findItem.quantity += 1
+                } else {
+                    const storeItem = {
+                        code: this.promoQuestion.code,
+                        name: this.promoQuestion.name,
+                        quantity: 1,
+                        price: rAnswer,
+                    }
+                    this.shoppingCart.push(storeItem);
+                }
+                // Simple visual feedback on the cart icon
+                const cartEl = document.getElementById('cart-target');
+                if (cartEl) {
+                    cartEl.style.transition = 'transform 0.1s';
+                    cartEl.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        cartEl.style.transform = 'scale(1)';
+                    }, 100);
+                }
+                this.closeQuestion()
+            }
+        },
+        closeQuestion() {
+            this.showQuestion = false
+            this.promoQuestion = []
+            this.setEvent = null
+            this.questionError = {
+                show: false,
+                message: null
+            }
+            this.answer = null
         }
     }
 }
@@ -850,12 +1004,13 @@ export default {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .cash-receipt-container {
     width: 380px;
     /* Fixed width */
-    max-height: 90vh;
+    max-height: 1000vh;
     /* Limit the maximum height of the entire receipt on screen */
     background-color: #fdfdfd;
     /* Off-white receipt paper */
@@ -995,5 +1150,27 @@ export default {
 .receipt-button-container .btn:hover {
     background-color: #0056b3;
     border-color: #0056b3;
+}
+
+.close-task {
+    background-color: red;
+    position: absolute;
+    z-index: 7;
+    right: 3%;
+    top: 5%;
+    font-size: 24px;
+    border-radius: 10%;
+    /* Size of the X */
+    line-height: 1;
+    color: #ffffff;
+    /* Dark Grey */
+    cursor: pointer;
+    padding: 0 6px;
+    transition: color 0.2s ease;
+}
+
+.close-task:hover {
+    color: #ff0000;
+    /* Red on hover */
 }
 </style>

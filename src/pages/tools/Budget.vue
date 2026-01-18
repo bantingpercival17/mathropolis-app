@@ -88,7 +88,7 @@ export default {
 /* Clipboard Styles */
 .clipboard-clip {
     width: 8rem;
-    height: 3rem;
+    height: 2rem;
     background-color: #d1d5db;
     border: 4px solid #9ca3af;
     border-bottom: 0;
@@ -101,12 +101,12 @@ export default {
 }
 
 .clipboard-hole {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1rem;
+    height: 1rem;
     background-color: #1f2937;
     border: 4px solid #9ca3af;
     border-radius: 50%;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
 }
 
 .clipboard-board {
@@ -118,7 +118,7 @@ export default {
 }
 
 .paper {
-    min-height: 500px;
+    min-height: 200px;
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     border-radius: 0.75rem;
     position: relative;

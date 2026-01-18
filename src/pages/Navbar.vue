@@ -1,53 +1,50 @@
 <template>
     <header class="app-header">
         <button class="image-button" aria-label="Menu Button">
-            <div v-if="isMap" class="button-icon text-center me-4">
-                <img class="button-icon" src="/assets/map.png" alt="" @click="$router.push('/map')">
-                <p style="font-size: x-small;">MAP</p>
+            <template v-if="isMap">
+                <div class="button-icon text-center me-4">
+                    <img class="button-icon" src="/assets/map.png" alt="" @click="$router.push('/map')">
+                    <p class="icon-text-badge">MAP</p>
+                </div>
+                <div v-if="tools?.House" class="button-icon text-center">
+                    <img class="button-icon" src="/assets/tools/formula.png" alt="" @click="showFormula = true">
+                    <p style="font-size: x-small; background-color: white;border-radius: 10%; font-weight: 900;">
+                        FORMULAS
+                    </p>
+                </div>
+                <div v-if="tools?.Bank" class="button-icon ms-4">
+                    <img class="button-icon" src="/assets/tools/budget-planning.png" alt="" @click="showBudget = true">
+                    <p style="font-size: x-small;background-color: white;border-radius: 10%; font-weight: 900;">BUDGET
+                        PLAN
+                    </p>
+                </div>
+            </template>
+            <div v-else class="button-icon text-center me-4">
+                <img class="button-icon" src="/assets/user.png" alt="" @click="showProfile = true">
+                <p class=" icon-text-badge">PROFILE</p>
             </div>
-            <div v-if="iconFormulaShow" class="button-icon text-center">
-                <img class="button-icon" src="/assets/tools/formula.png" alt="" @click="showFormula = true">
-                <p style="font-size: x-small;">FORMULAS</p>
-            </div>
-            <div v-if="iconBudgetShow" class="button-icon ms-4">
-                <img class="button-icon" src="/assets/tools/budget-planning.png" alt="" @click="showBudget = true">
-                <p style="font-size: x-small;">BUDGET PLAN</p>
-            </div>
+
         </button>
 
+        <div class="coin-bg">
+            <span style="font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">₱
+                {{ coins }}
+            </span>
+        </div>
+        <label for="" class="budget-style">{{ budget }}</label>
+        <span class="">
 
-        <span class="header-label">
-            <!-- <div v-if="store" class="storefront-container">
-                <div class="calculation-sign">
-                    <p class="calculation-text">{{ budget }}</p>
-                </div>
-            </div> -->
-            <div class="progress-container">
+
+            <!--  <div class="progress-container">
                 <div class="star-coin"></div>
                 <div class="progress-bar-background">
                     <span class="rank-text">₱ {{ coin }}</span>
                 </div>
                 <label for="" class="budget-style">{{ budget }}</label>
-            </div>
+            </div> -->
         </span>
     </header>
-    <!-- <header class="kids-header">
-        <div class="header-content">
-            <div class="header-icons">
-                <div class="icon-item clickable-button" id="budget-instructions-btn">
-                    <img class="emoji-icon" src="/assets/tools/formula.png" alt="" @click="showFormula = true">
-                    <p>FORMULAS</p>
-                </div>
-                <div class="icon-item clickable-button" id="formula-logic-btn">
-                    <img class="emoji-icon" src="/assets/tools/budget-planning.png" alt="">
-                    <p>BUDGET PLAN</p>
-                </div>
-            </div>
-            <div class="score-display float-end">
-               
-            </div>
-        </div>
-    </header> -->
+    <Profile v-if="showProfile" @close="handleChildClose" @reset="$emit('reset')" :userTools="tools" />
     <Budget v-if="showBudget" @close="handleChildClose" />
     <Formulas v-if="showFormula" @close="handleChildClose" />
 
@@ -57,54 +54,41 @@
 import { useRoute } from 'vue-router';
 import Formulas from './tools/Formulas.vue';
 import Budget from './tools/Budget.vue';
+import Profile from './tools/Profile.vue';
 
 export default {
     name: 'Navbar',
     data() {
         return {
-            coin: 0,
             budget: '',
             showFormula: false,
             showBudget: false,
+            showProfile: false,
             iconFormulaShow: false,
             iconBudgetShow: false,
             isMap: false,
         }
     },
-    emits: ['close'],
+    emits: ['close', 'reset'],
     components: {
-        Formulas, Budget
+        Formulas, Budget, Profile
     },
     props: {
         budgetName: String,
         store: {
             default: false,
             type: Boolean
-        }
+        },
+        tools: Object,
+        coins: Number
     },
     mounted() {
-        this.coin = localStorage.getItem('coin')
         const budgetPlan = localStorage.getItem('budgetPlan')
         if (budgetPlan) {
             const plan = JSON.parse(budgetPlan);
             const budget = plan.find(item => item.name === this.budgetName);
-            console.log(budget)
             if (budget) {
-                this.budget = budget.percent + "% of " + this.coin;
-            }
-        }
-
-        const buildings = JSON.parse(localStorage.getItem('buildings'));
-        if (buildings) {
-            console.log(buildings)
-            const home = buildings.find(build => build.name === 'House')
-            console.log(home)
-            if (home.isDone) {
-                this.iconFormulaShow = true
-            }
-            const budget = buildings.find(build => build.name === 'Bank')
-            if (budget.isDone) {
-                this.iconBudgetShow = true
+                this.budget = budget.percent + "% of " + 5000;
             }
         }
         // Check Mapp
@@ -117,6 +101,7 @@ export default {
         handleChildClose() {
             this.showFormula = false
             this.showBudget = false
+            this.showProfile = false
         }
     }
 };
@@ -231,8 +216,8 @@ export default {
     /* Needed to position the inner elements */
     overflow: hidden;
     /* Ensures elements don't spill out */
-    min-height: 150px;
-    min-width: 250px;
+    min-height: 100px;
+    min-width: 25-.0px;
     /* Give it some vertical space */
 }
 
@@ -296,8 +281,8 @@ export default {
 .budget-style {
     position: absolute;
     right: 50px;
-    bottom: 10px;
-    font-size: 20px;
+    bottom: 50px;
+    font-size: 12px;
     font-weight: bold;
     color: #ffffff;
     background-color: #70ad47;
@@ -319,9 +304,11 @@ export default {
     /* Vertically centers the items */
     position: absolute;
     padding: 60px 30px;
+    margin: 0;
     /* Padding inside the header */
     height: 50px;
     /* Fixed height for the header */
+    z-index: 1;
 }
 
 /* 2. Style for the image button */
@@ -342,7 +329,7 @@ export default {
 }
 
 .button-icon {
-    max-width: 70%;
+    max-width: 40px;
     /* Size of the image/icon */
     background-size: cover;
     text-align: center;
@@ -360,5 +347,12 @@ export default {
     font-weight: bold;
     color: #ffd700;
     /* A golden color for "Coin Label" */
+}
+
+.icon-text-badge {
+    font-size: x-small;
+    background-color: white;
+    border-radius: 10%;
+    font-weight: 900;
 }
 </style>

@@ -17,12 +17,11 @@
 
         </a>
         <a v-else class="next-button-v2" @click="nextInstruction">
-            <svg width="160" height="50" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="160" height="50" rx="25" fill="RED" />
-                <text x="55%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="20"
-                    font-weight="bold" fill="#fff">
-                    CLOSE
-                </text>
+            <svg width="110" height="34" viewBox="0 0 110 34" xmlns="http://www.w3.org/2000/svg" role="img"
+                aria-label="Next">
+                <rect x="0" y="0" width="110" height="34" rx="17" fill="RED" />
+                <text x="30" y="22" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="14"
+                    fill="#f7fff9">CLOSE</text>
             </svg>
 
         </a>
@@ -39,18 +38,18 @@ export default {
             formula: [
                 {
                     instruction: `<div class="">
-                <h1 class="main-title" style="font-size:50px; color: red; font-weight: 900;" >MATHEMATICAL CONCEPTS<br>OF FINANCIAL LITERACY</h1>
-                <p class="instruction" style="font-size:36px;">Solve money problems involving percentages</p>
+                <h1 class="main-title" style="font-size:20px; color: red; font-weight: 900;" >MATHEMATICAL CONCEPTS<br>OF FINANCIAL LITERACY</h1>
+                <p class="instruction" style="font-size:18px;">Solve money problems involving percentages</p>
                 <div class="concepts-grid">
                 <ul class="concepts-list" style="font-size:32px;">
-                    <li data-formula="1"  style="font-size:36px;">INCREASE</li>
-                    <li data-formula="2"  style="font-size:36px;">DECREASE</li>
-                    <li data-formula="3"  style="font-size:36px;">DISCOUNT</li>
+                    <li data-formula="1"  style="font-size:18px;">INCREASE</li>
+                    <li data-formula="2"  style="font-size:18px;">DECREASE</li>
+                    <li data-formula="3"  style="font-size:18px;">DISCOUNT</li>
                 </ul>
                 <ul class="concepts-list" style="font-size:32px;">
-                    <li data-formula="4"  style="font-size:36px;">COMMISSION</li>
-                    <li data-formula="5"  style="font-size:36px;">SALES TAX</li>
-                    <li data-formula="6"  style="font-size:36px;">SIMPLE INTEREST</li>
+                    <li data-formula="4"  style="font-size:18px;">COMMISSION</li>
+                    <li data-formula="5"  style="font-size:18px;">SALES TAX</li>
+                    <li data-formula="6"  style="font-size:18px;">SIMPLE INTEREST</li>
                 </ul>
             </div>
             </div>`,
@@ -173,21 +172,13 @@ export default {
 }
 </script>
 <style scoped>
-/* .formula-container {
-    position: absolute;
-    width: 100%;
-    height: 80vh;
-    background-color: rgba(255, 255, 255, 0.5);
-    z-index: 10;
-}
- */
 .house-layout {
     /*  font-family: 'Sandspit', sans-serif; */
     font-family: 'Children Sans', sans-serif;
     padding-top: 1%;
     padding-left: 10%;
     width: 85%;
-    font-size: 20px;
+    font-size: 12px;
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 15px;
     z-index: 10;

@@ -1,22 +1,106 @@
 <template>
     <div class="supermarket-container supermarket-bg">
-        <Navbar budgetName="Supermarket" store="true" />
-        <div v-if="message" class="message-box bg-warning text-dark">
-            {{ message }}
+        <Navbar :budgetName="this.building" :store="true" :tools="enabledTools" />
+        <div v-if="message" class="message-box bg-warning text-white text-center" v-html="message">
         </div>
-        <img v-for="(stall, index) in stalls" :key="index" class="stall stall-image" :style="stall.position"
-            @click="choiceStall(index)" :src="stall.image" alt="">
-        <img @click="tapCart" src="/assets/supermarket/cart.png" alt="" class="cart">
-        <img src="/assets/supermarket/terminal.png" alt="" class="terminal">
-        <div v-if="showTask" class=" atm-info task-content">
-            <div class="close-task" @click="closeTask">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
+        <div class="kiosk" @click="kioskPanel = true"></div>
+        <div v-if="showSubInstructions" class="task-content d-flex justify-content-center align-items-center"
+            style="background: rgba(0,0,0,0.8);">
+            <div class="stall-content p-4 border border-primary shadow-lg"
+                style="max-width: 480px; height: auto; border-width: 5px !important;">
+                <h3 class="text-primary fw-bold text-center mb-3">🌐 ONLINE SUBSCRIPTION GUIDE</h3>
+
+                <div class="instruction-body small">
+                    <div class="mb-3 p-2 bg-light rounded border-start border-success border-4">
+                        <strong>💸 DISCOUNTS:</strong> Price is reduced instantly. Look for student or summer deals!
+                    </div>
+
+                    <div class="mb-3 p-2 bg-light rounded border-start border-danger border-4">
+                        <strong>📈 SALES TAX:</strong> Standard 12% VAT is added to your total at checkout.
+                    </div>
+
+                    <div class="mb-3 p-2 bg-light rounded border-start border-info border-4">
+                        <strong>📅 INTEREST:</strong> Calculated as $I = P \times r \times t$.
+                        Check the <i>Years</i> in the description!
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 fw-bold mt-2 py-3" @click="startSubTask">
+                    UNDERSTOOD, GO TO MARKET
+                </button>
             </div>
+        </div>
+        <div v-if="kioskPanel" class="task-content d-flex justify-content-center align-items-center"
+            style="background: rgba(0,0,0,0.7);">
+            <div class="stall-content p-4 text-center d-flex flex-column" style="max-width: 650px; height: 90%;">
+                <div class="d-flex justify-content-between align-items-center border-bottom ">
+                    <h3 class="text-primary fw-bold text-center mb-3">
+                        <span style="background-color: #007bff;; padding-left: 20px;padding-right:20px;
+                            color:white">ONLINE</span>
+                        SUBSCRIPTION
+                    </h3>
+                    <button class="btn btn-sm btn-outline-danger" @click="kioskPanel = false">Close</button>
+                </div>
+                <div class="row">
+                    <!-- Food Items -->
+                    <div class="col-7">
+                        <div class="row g-3 overflow-auto"
+                            style="max-height: 65vh; background-color: #64afff; padding:10px; margin-top:10px;">
+                            <div class="list-group">
+                                <button v-for="item in subscriptions" :key="item.name" @click="addToCart(item)"
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 shadow-sm mb-2 rounded">
+                                    <div>
+                                        <span class="fw-semibold text-primary text-start">{{ item.name }}</span> <br>
+                                        <small class="text-start">{{ item.desc }}</small>
+                                    </div>
+                                    <span class="badge bg-danger rounded-pill">₱{{ item.price.toFixed(2) }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5 col-4 m-0 p-0">
+                        <label for="" class="fw-bolder text-center text-primary">SUBSCRIPTION CART</label>
+                        <div class="text-start mb-4 overflow-auto" style="height: 130px;">
+                            <template v-if="subscriptionCart.length > 0">
+                                <div class="instruction-step mb-3 p-1 d-flex justify-content-between align-items-center bg-light rounded-3"
+                                    v-for="item in subscriptionCart" :key="item.code">
+                                    <div>
+                                        <h6 class="fw-bold text-dark">{{ item.name }}</h6>
+                                        <small class="text-muted">
+                                            {{ item.quantity }} * @ ₱{{ item.price.toFixed(2) }}
+                                        </small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2 fw-semibold fs-6">
+                                            ₱{{ (item.quantity * (item.price)).toFixed(2) }}
+                                        </span>
+                                        <button @click="removeFromCart(item)"
+                                            class="btn btn-sm text-danger hover:text-danger rounded-circle lh-1 fs-5">
+                                            &minus;
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div
+                                    class="instruction-step mb-3 p-1 d-flex justify-content-between align-items-center bg-light rounded-3">
+                                    Your cart is empty.
+                                </div>
+                            </template>
+
+                        </div>
+                        <div class="receipt-total">
+                            <span>TOTAL:</span>
+                            <span>₱{{ cartTotal.toFixed(2) }}</span>
+                        </div>
+                        <button class="btn btn-primary btn-sm w-100" @click="processPayment">CHECKOUT</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div v-if="showQuestion" class="atm-info task-content">
             <div class="p-4 align-items-start position-relative z-1">
                 <div class="right-content d-flex flex-column gap-4">
                     <!-- Instructions Card -->
@@ -26,27 +110,34 @@
                         <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
                             style="width: 10px; height: 40px; left: -14px;"></div>
 
-                        <div class="card-body p-4">
+                        <div class="card-body p-4"> <span class="badge bg-danger float-end"
+                                @click="closeQuestion">X</span>
                             <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
-                                TASK 2:
+                                PROMO QUESTION
                             </h6>
 
                             <div class="card-text text-secondary-emphasis">
                                 <p>
-                                    Your task is to budget of your assigned percentage of your money for supermarket
-                                    expenses.
+                                    {{ generateQuestion(promoQuestion) }}
+                                    <!--  A {{ promoQuestion.name }} costs ₱{{ promoQuestion.price }}.
+                                    <b>{{ promoQuestion.desc }}</b>.
+                                    <br> What is the new price? -->
                                 </p>
 
-                                <div class="alert alert-info border-start border-info border-4 rounded mb-0 ">
-                                    <p class="fw-bold d-flex align-items-center gap-2 mb-2">
-                                        Rewards:
-                                    </p>
-                                    <p class="small mb-1">The Department Store level unlocked.</p>
+                                <div class="form-group">
+                                    <input type="text" v-model="answer" class="form-control border border-primary">
                                 </div>
+                                <template v-if="questionError.show">
+                                    <div class="alert alert-danger border-start border-danger border rounded mt-2 ">
+                                        <span class="badge bg-danger float-end"
+                                            @click="questionError.show = false">X</span>
+                                        <p class="small mb-1">{{ questionError.message }}</p>
+                                    </div>
+                                </template>
                             </div>
-                            <button @click="gameStart"
-                                class="btn btn-sm btn-info w-100 rounded mt-4 text-white fw-bold">
-                                START THE GAME
+                            <button @click="submitAnswer"
+                                class="btn btn-sm btn-info w-100 rounded mt-1 text-white fw-bold">
+                                SUBMIT ANSWER
                             </button>
                         </div>
                     </div>
@@ -54,601 +145,258 @@
             </div>
 
         </div>
-        <div v-if="showStalls" class="stall-content">
-            <div class="row p-4 align-items-start position-relative z-1">
-                <!-- LEFT COL: Clipboard -->
-                <div class="left-content col-sm-6 col-xs-6 d-flex flex-column align-items-center">
-                    <img class="selected-stall" :src="this.stallContent.image" alt="">
-                    <div class="items-display position-absolute w-100 h-100" style="top: 0; left: 0;">
-                        <div v-for="(item, index) in stallContent.items" :key="index" class="item-hotspot"
-                            :data-index="index" @click="addToCartWithAnimation(item, $event)">
-                        </div>
-                    </div>
+        <div v-if="completeTask" class="cash-receipt-overlay">
+            <div class="cash-receipt-container">
+                <div class="cash-receipt-header">
+                    CASH RECEIPT
                 </div>
-                <!-- RIGHT COL: Info -->
-                <div class="right-content col-sm-6 col-xs-6 d-flex flex-column gap-4">
-                    <!-- Instructions Card -->
-                    <div class="card border-0 shadow-lg position-relative" style="border: 4px solid #e5e7eb;">
-                        <!-- Visual tab on left -->
-                        <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
-                            style="width: 10px; height: 40px; left: -14px;"></div>
+                <div class="receipt-info">
+                    <div>Tel: 123-456-789</div>
+                    <div>Date: {{ new Date().toLocaleDateString() }}</div>
+                </div>
+                <div class="scrollable-items-wrapper">
+                    <ul class="receipt-items">
+                        <!-- Dynamically list items from the cart, grouping duplicates -->
+                        <li v-for="(item, index) in subscriptionCart" :key="index" class="receipt-item">
+                            <span>{{ item.quantity }} * {{ item.name }} ({{ item.price }})</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span>₱{{ item.price * item.quantity }}</span>
 
-                        <div class="card-body p-4 text-center">
-                            <img id="cart-target" src="/assets/supermarket/cart.png" alt="" style="width: 50%;">
-                            <p class="mt-2 text-muted">Items in cart: <span class="fw-bold">{{ cartItemCount
-                                    }}</span></p>
-                        </div>
-                    </div>
-                    <button @click="closeStall" class="btn btn-sm btn-primary rounded">NEXT ITEMS</button>
-                </div>
-            </div>
-        </div>
-        <div v-if="showCart" class="cart-items">
-            <div class="card shadow cart-items-content">
-                <div class="card-header bg-white border-bottom text-primary fw-semibold">
-                    <button class="btn btn-danger btn-sm float-end" @click="showCart = false">CLOSE</button>
-                    <h6 class="mb-0 fw-bolder">Your Cart ({{ cartItemCount }} items)</h6>
-
-                </div>
-                <div class="card-body">
-                    <div class="overflow-auto" style="max-height: 40vh; margin-bottom: 1rem;">
-                        <div v-for="cartItem in shoppingCart" :key="cartItem.code"
-                            class="d-flex justify-content-between align-items-center bg-light rounded-3">
-                            <div>
-                                <span class="fw-bold">{{ cartItem.quantity }}x {{ cartItem.name }}</span>
-                                <br><small class="text-muted">
-                                    @ ₱{{ cartItem.price.toFixed(2) }}
-                                </small>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-semibold fs-6">
-                                    ₱{{ (cartItem.quantity * (cartItem.price)).toFixed(2) }}
-                                </span>
-                                <button @click="removeItemFromCart(cartItem)"
-                                    class="btn btn-sm text-danger hover:text-danger rounded-circle lh-1 fs-5">
-                                    &minus;
-                                </button>
-                            </div>
-                        </div>
-                        <div v-if="cartItemCount === 0" class="text-center text-muted p-4">Cart is empty.</div>
-                    </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="receipt-total">
+                    <span>Total:</span>
+                    <span>Items ({{ this.cartItemCount }})</span>
+                    <span>{{ cartTotal.toFixed(2) }}</span>
+                </div>
+                <div class="receipt-congratulations">
+                    CONGRATULATIONS!
+                </div>
 
-                    <div class="border-top border-secondary">
-                        <p class="fs-6 d-flex justify-content-between text-success fw-bolder">
-                            Total to Pay (Current): <span class="fw-bolder">₱{{ cartTotal.toFixed(2) }}</span>
-                        </p>
-                    </div>
-
-                    <button @click="showReceiptScreen" :disabled="cartItemCount < 2" :class="['w-100', 'btn', 'shadow-lg', 'rounded-3', 'transition',
-                        { 'btn-success': cartItemCount >= 2, 'btn-secondary text-muted': cartItemCount < 2 }]">
-                        Go to Checkout (Minimum 2 Items)
-                    </button>
+                <div class="receipt-button-container">
+                    <button @click="nextGame" class="btn btn-primary">NEXT</button>
                 </div>
             </div>
         </div>
     </div>
-    <div v-if="showReceipt" class="cash-receipt-overlay">
-        <div class="cash-receipt-container">
-            <div class="cash-receipt-header">
-                CASH RECEIPT
-            </div>
-            <div class="receipt-info">
-                <div>Tel: 123-456-789</div>
-                <div>Date: {{ getCurrentDate() }}</div>
-            </div>
-            <div class="scrollable-items-wrapper">
-                <ul class="receipt-items">
-                    <!-- Dynamically list items from the cart, grouping duplicates -->
-                    <li v-for="(item, index) in shoppingCart" :key="index" class="receipt-item">
-                        <span>{{ item.name }}</span>
-                        <span>{{ item.quantity }} x {{ formatPrice(item.price) }}</span>
-                        <span>{{ formatPrice(item.quantity * item.price) }}</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="receipt-total">
-                <span>Total:</span>
-                <span>Items ({{ this.cartItemCount }})</span>
-                <span>{{ formatPrice(cartTotal) }}</span>
-            </div>
-            <div class="receipt-congratulations">
-                CONGRATULATIONS!
-            </div>
 
-            <div class="receipt-button-container">
-                <button @click="nextGame" class="btn btn-primary">NEXT</button>
-            </div>
-        </div>
-    </div>
 
 </template>
 <script>
 import Navbar from '../Navbar.vue';
-
+import { storeGameProgress, fetchGameProgress } from '../../controller';
+import { updateCoins, completeBuilding } from '../../gameProgress.service';
 export default {
-    name: 'Supermarket',
+    name: 'Online Subscription',
     components: {
         Navbar,
     },
     data() {
         return {
-            isReadTask: false,
-            showTask: false,
-            showTerminal: false,
-            showStalls: false,
-            showCart: false,
-            building: 'SuperMarket',
-            stallContent: [],
-            stalls: [{
-                image: '/assets/supermarket/stall-1.png',
-                position: 'bottom: 5%; left: 10%;z-index:1;',
-                items: [
-                    {
-                        code: 11,
-                        name: 'Juice Pack (6pcs)',
-                        price: 220.00,
-                        promo: 0,
-                        question: 'A bottle of orange juice costs ₱220. The supermarket gives a <b> 20% discount<b>. What is the new price?',
-                        answer: 176,
-                        image: '/assets/supermarket/items/item-11.png'
-                    },
-                    {
-                        code: 12,
-                        name: 'Coffee Jar',
-                        price: 250.00,
-                        promo: 0,
-                        image: '/assets/supermarket/items/item-12.png'
-                    },
-                    {
-                        code: 13,
-                        name: 'Sugar (1kg)',
-                        price: 100.00,
-                        promo: 0
-                    },
-                    {
-                        code: 13,
-                        name: 'Sugar (1kg)',
-                        price: 100.00,
-                        promo: 0
-                    },
-                    {
-                        code: 14,
-                        name: 'Egg (6pcs Tray)',
-                        price: 90.00,
-                        promo: 0
-                    },
-                    {
-                        code: 14,
-                        name: 'Egg (6pcs Tray)',
-                        price: 90.00,
-                        promo: 0
-                    },
-                ]
-            },
-            {
-                image: '/assets/supermarket/stall-2.png',
-                position: 'bottom: 5%; left: 35%;z-index:1;',
-                items: [
-                    {
-                        code: 21,
-                        name: 'Cooking Oil',
-                        price: 120.00,
-                        promo: 0
-                    },
-                    {
-                        code: 22,
-                        name: 'Corned Beef',
-                        price: 300.00,
-                        promo: 0
-                    },
-                    {
-                        code: 22,
-                        name: 'Corned Beef',
-                        price: 300.00,
-                        promo: 0
-                    },
-                    {
-                        code: 23,
-                        name: 'Canned Tuna',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 24,
-                        name: 'Instant noodles',
-                        price: 25.00,
-                        promo: 0
-                    },
-                    {
-                        code: 24,
-                        name: 'Instant noodles',
-                        price: 25.00,
-                        promo: 0
-                    },
-                ]
-            },
-            {
-                image: '/assets/supermarket/stall-3.png',
-                position: 'bottom: 5%; left: 60%;z-index:1;',
-                items: [
-                    {
-                        code: 31,
-                        name: 'Fresh Milk',
-                        price: 95.00,
-                        promo: 0
-                    },
-                    {
-                        code: 32,
-                        name: 'Bearbrand Milk',
-                        price: 335.00,
-                        promo: 0
-                    },
-                    {
-                        code: 33,
-                        name: 'Nido Milk',
-                        price: 500.00,
-                        promo: 0
-                    },
-                    {
-                        code: 34,
-                        name: 'Pampers',
-                        price: 400.00,
-                        promo: 0
-                    },
-                    {
-                        code: 35,
-                        name: 'Tissue Roll',
-                        price: 20.00,
-                        promo: 0
-                    },
-                    {
-                        code: 36,
-                        name: 'Wet Wipes',
-                        price: 30.00,
-                        promo: 0
-                    },
-                ]
-            },
-            {
-                image: '/assets/supermarket/stall-4.png',
-                position: 'bottom: 20%; left: 20%;',
-                items: [
-                    {
-                        code: 41,
-                        name: 'Biscuit',
-                        price: 40.00,
-                        promo: 0
-                    },
-                    {
-                        code: 41,
-                        name: 'Biscuit',
-                        price: 40.00,
-                        promo: 0
-                    },
-                    {
-                        code: 42,
-                        name: 'Bread',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 42,
-                        name: 'Bread',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 43,
-                        name: 'Cereal',
-                        price: 200.00,
-                        promo: 0
-                    },
-                    {
-                        code: 43,
-                        name: 'Cereal',
-                        price: 200.00,
-                        promo: 0
-                    }
-                ]
-            },
-            {
-                image: '/assets/supermarket/stall-5.png',
-                position: 'bottom: 20%; left: 45%;',
-                items: [
-                    {
-                        code: 51,
-                        name: 'Colgate',
-                        price: 70.00,
-                        promo: 0
-                    },
-                    {
-                        code: 52,
-                        name: 'Shampoo (6pcs)',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 53,
-                        name: 'Soap Bar',
-                        price: 20.00,
-                        promo: 0
-                    },
-                    {
-                        code: 54,
-                        name: 'Soap Box',
-                        price: 50.00,
-                        promo: 0
-                    },
-                    {
-                        code: 55,
-                        name: 'Surf Powder (2 kg)',
-                        price: 220.00,
-                        promo: 0
-                    },
-                    {
-                        code: 56,
-                        name: 'Surf Fabcon',
-                        price: 280.00,
-                        promo: 0
-                    },
-                ]
-            }, {
-                image: '/assets/supermarket/stall-6.png',
-                position: 'bottom: 20%; left: 70%;',
-                items: [
-                    {
-                        code: 61,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 62,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 63,
-                        name: 'Jack’n Jill Chips',
-                        price: 45.00,
-                        promo: 0
-                    },
-                    {
-                        code: 64,
-                        name: 'Canned Chips',
-                        price: 90.00,
-                        promo: 0
-                    },
-                    {
-                        code: 65,
-                        name: 'Chocolate Bar',
-                        price: 35.00,
-                        promo: 0
-                    },
-                    {
-                        code: 66,
-                        name: 'Chocolate Candies (3pcs)',
-                        price: 35.00,
-                        promo: 0
-                    }
-                ]
-            }],
-            shoppingCart: [],
+            showSubInstructions: true,
+            kioskPanel: false,
+            building: 'Online Subscription',
             showReceipt: false,
-            message: null
+            completeTask: false,
+            message: null,
+            selectedCategory: 'All',
+            subscriptionCart: [],
+            subscriptions: [
+                { code: 1, name: "Spotify Premium", price: 150, logic: "Discount", rate: 0.10, desc: "10% student discount" },
+                { code: 2, name: "Netflix Basic", price: 200, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
+                { code: 3, name: "ML Diamonds", price: 250, logic: "Commission", rate: 0.05, desc: "5% agent commission" },
+                { code: 4, name: "Apple Music", price: 180, logic: "Simple Interest", rate: 0.10, years: 1, desc: "10% interest/year" },
+                { code: 5, name: "PlayStation Plus", price: 500, logic: "Discount", rate: 0.20, desc: "20% summer sale" },
+                { code: 6, name: "Disney+", price: 300, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
+                { code: 7, name: "YouTube Premium", price: 200, logic: "Commission", rate: 0.10, desc: "10% promoter commission" },
+                { code: 8, name: "Discord Nitro", price: 250, logic: "Simple Interest", rate: 0.08, years: 2, desc: "8% interest for 2 years" },
+                { code: 9, name: "Roblox Premium", price: 400, logic: "Discount", rate: 0.15, desc: "15% off" },
+                { code: 10, name: "Canva Pro", price: 500, logic: "Commission", rate: 0.05, desc: "5% affiliate commission" },
+                { code: 11, name: "Deezer", price: 180, logic: "Simple Interest", rate: 0.10, years: 2, desc: "10% interest for 2 years" },
+                { code: 12, name: "Xbox Game Pass", price: 450, logic: "Discount", rate: 0.10, desc: "10% off" },
+                { code: 13, name: "TikTok Premium", price: 250, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
+                { code: 14, name: "Adobe Creative Cloud", price: 500, logic: "Simple Interest", rate: 0.06, years: 3, desc: "6% interest for 3 years" },
+                { code: 15, name: "Zoom Premium", price: 120, logic: "Discount", rate: 0.05, desc: "5% student discount" }
+            ],
+            showQuestion: false,
+            promoQuestion: [],
+            setEvent: null,
+            questionError: {
+                show: false,
+                message: null
+            },
+            answer: null
         }
     },
     computed: {
+        enabledTools() {
+            try {
+                const buildings = JSON.parse(localStorage.getItem('buildings')) ?? [];
+                return Object.fromEntries(
+                    buildings.map(({ name, isDone }) => [name, !!isDone])
+                );
+            } catch {
+                return {};
+            }
+        },
+        categories() {
+            return ['All', ...Object.keys(this.menuData)];
+        },
+
+        filteredMenu() {
+            if (this.selectedCategory === 'All') {
+                return this.menuData;
+            }
+            return {
+                [this.selectedCategory]: this.menuData[this.selectedCategory]
+            };
+        },
+
+        // ✅ This is NOT undefined
         totalCount() {
-            return this.shoppingCart.reduce((acc, item) => {
-                acc.totalQuantity += item.quantity;
-                acc.totalAmount += item.price * item.quantity; // include quantity in price calculation
-                return acc;
-            }, { totalQuantity: 0, totalAmount: 0 });
+            return this.subscriptionCart.reduce(
+                (acc, item) => {
+                    acc.totalQuantity += item.quantity;
+                    acc.totalAmount += item.price * item.quantity;
+                    return acc;
+                },
+                { totalQuantity: 0, totalAmount: 0 }
+            );
         },
+
         cartItemCount() {
-            return this.totalCount.totalQuantity
+            return this.totalCount.totalQuantity;
         },
+
         cartTotal() {
-            return this.totalCount.totalAmount
+            return this.totalCount.totalAmount;
+        },
+
+        expectedBudget() {
+            const budgetPlan = localStorage.getItem('budgetPlan');
+            if (!budgetPlan) return 0;
+
+            const plan = JSON.parse(budgetPlan);
+            const budget = plan.find(
+                item => item.name === this.building
+            );
+
+            return budget ? budget.amount : 0;
         }
     },
     methods: {
-        nextGame() {
-            const coin = localStorage.getItem('coin')
-            const totalCoin = coin - this.cartTotal
-            localStorage.setItem('coin', totalCoin)
-            let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');
-            const current = buildings.find(item => item.name === 'Supermarket');
-            const next = buildings.find(item => item.name === 'Department Store');
-            if (current) {
-                current.isLocked = true;
-                current.isDone = true;
-                next.isLocked = false
-            }
-            localStorage.setItem('buildings', JSON.stringify(buildings));
-            // Navigate to the next page after the last instruction
-            this.$router.push('/map');
-        },
-        choiceStall(stall) {
-            if (this.isReadTask) {
-                this.showStalls = true
-                this.stallContent = this.stalls[stall]
-            } else {
-                this.message = "Select the Cart"
-                setTimeout(() => {
-                    this.message = null;
-                }, 2000);
-            }
-
-        },
-        closeStall() {
-            this.showStalls = false
-        },
-        tapCart() {
-            if (this.isReadTask) {
-                this.showCart = true
-            } else {
-                this.showTask = true
-            }
-        },
-        gameStart() {
-            this.isReadTask = true;
-            this.showTask = false
-        },
-        getCartPosition() {
-            const cartImage = document.getElementById('cart-target');
-            if (!cartImage) return null;
-
-            const rect = cartImage.getBoundingClientRect();
-            return {
-                x: rect.left + rect.width / 2, // Center X
-                y: rect.top + rect.height / 2 // Center Y
-            };
-        },
-        addToCartWithAnimation(item, event) {
-            if (!this.isReadTask) {
-                showMessage("Please read the task first! Click the cart to start.");
+        addToCart(item) {
+            if (item.rate != 0) {
+                this.promoQuestion = item
+                this.showQuestion = true
                 return;
             }
+            const findItem = this.subscriptionCart.find(
+                itemCart => itemCart.code === item.code
+            );
 
-            const cartPos = this.getCartPosition();
-            if (!cartPos) {
-                console.error("Cart target not found for animation.");
-                return;
-            }
-
-            const startEl = event.currentTarget; // The clicked hotspot div
-            const startRect = startEl.getBoundingClientRect();
-
-            // 1. CREATE AND POSITION THE CLONE ELEMENT
-            const clone = document.createElement('div');
-            clone.classList.add('animating-clone');
-
-            // --- MODIFIED TO USE IMAGE ---
-            // Use the item image for the clone
-            const initialSize = 50; // Standard size for the flying object
-            if (item.image) {
-                clone.innerHTML = `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px;">`;
+            if (findItem) {
+                findItem.quantity += 1;
             } else {
-                // Fallback to text if no image is available
-                clone.textContent = item.name.split(' ')[0];
-                clone.style.backgroundColor = '#3498db';
+                const storeItem = {
+                    code: item.code,
+                    name: item.name,
+                    quantity: 1,
+                    price: item.price
+                };
+                this.subscriptionCart.push(storeItem);
             }
-
-            // Set initial size and position (fixed to viewport)
-            clone.style.width = initialSize + 'px';
-            clone.style.height = initialSize + 'px';
-
-            // Center the clone on the clicked hotspot
-            clone.style.left = startRect.left + (startRect.width / 2) - (initialSize / 2) + 'px';
-            clone.style.top = startRect.top + (startRect.height / 2) - (initialSize / 2) + 'px';
-            clone.style.margin = '0';
-            // --- END MODIFIED SECTION ---
-
-            document.body.appendChild(clone);
-
-            // 2. CALCULATE THE MOVEMENT DISTANCE
-            const cloneRect = clone.getBoundingClientRect(); // Get the calculated position of the clone
-
-            const startCenterX = cloneRect.left + (cloneRect.width / 2);
-            const startCenterY = cloneRect.top + (cloneRect.height / 2);
-
-            const deltaX = cartPos.x - startCenterX;
-            const deltaY = cartPos.y - startCenterY;
-            // 3. START THE TRANSITION
-            // Use requestAnimationFrame to ensure the initial position is rendered before the transition starts
-            requestAnimationFrame(() => {
-                clone.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
-                clone.style.image = item.image
-                clone.style.opacity = '0';
-            });
-
-            // 4. AFTER ANIMATION: Add item to cart and clean up
-            requestAnimationFrame(() => {
-                // Move and scale down to look like it's landing inside
-                clone.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
-                clone.style.opacity = '0';
-            });
-
-            // 4. AFTER ANIMATION: Add item to cart and clean up
-            clone.addEventListener('transitionend', () => {
-                // Add the item to the cart array *after* the animation
-                const findItem = this.shoppingCart.find(itemCart => itemCart.code === item.code);
-                if (findItem) {
-                    findItem.quantity += 1
-                } else {
-                    const storeItem = {
-                        code: item.code,
-                        name: item.name,
-                        quantity: 1,
-                        price: item.price,
-                    }
-                    this.shoppingCart.push(storeItem);
-                }
-                // Simple visual feedback on the cart icon
-                const cartEl = document.getElementById('cart-target');
-                if (cartEl) {
-                    cartEl.style.transition = 'transform 0.1s';
-                    cartEl.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        cartEl.style.transform = 'scale(1)';
-                    }, 100);
-                }
-
-                clone.remove();
-            }, { once: true });
         },
-        removeItemFromCart(item) {
-            const index = this.shoppingCart.findIndex(i => i.code === item.code);
+        removeFromCart(item) {
+            const index = this.subscriptionCart.findIndex(
+                i => i.code === item.code
+            );
+
             if (index !== -1) {
-                const cartItem = this.shoppingCart[index];
+                const cartItem = this.subscriptionCart[index];
                 cartItem.quantity--;
+
                 if (cartItem.quantity <= 0) {
-                    this.shoppingCart.splice(index, 1);
+                    this.subscriptionCart.splice(index, 1);
                 }
             }
-
         },
-        getCurrentDate() {
-            const today = new Date();
-            const dd = String(today.getDate()).padStart(2, '0');
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            const yy = String(today.getFullYear()).slice(-2);
-            return `${dd}/${mm}/${yy}`;
-        }, formatPrice(price) {
+        formatPrice(price) {
             // Ensures price is a number for calculation, then formats
             const numericPrice = typeof price === 'string' ? parseFloat(price.replace('₱', '')) : price;
             return '₱' + numericPrice.toFixed(2);
         },
-        showReceiptScreen() {
-            if (this.shoppingCart.length === 0) {
-                this.showMessage("Your cart is empty! Add some items first.");
-                return;
-            }
-            const budgetPlan = localStorage.getItem('budgetPlan')
-            if (budgetPlan) {
-                const plan = JSON.parse(budgetPlan);
-                const budget = plan.find(item => item.name === 'Supermarket');
-                const expectedBudget = localStorage.getItem('coin') * (budget.percent / 100)
-                console.log(expectedBudget)
-                if (this.cartTotal == expectedBudget) {
-                    this.showCart = false; // 
-                    this.showReceipt = true; // 
+        processPayment() {
+            if (this.subscriptionCart.length === 0) return;
+            if (this.expectedBudget != this.cartTotal) {
+                if (this.expectedBudget > this.cartTotal) {
+                    this.message = 'Add More Items';
+                    setTimeout(() => { this.message = null }, 2000)
+                    return;
                 } else {
-                    this.showMessage('You have exceeded your grocery budget')
-
+                    this.message = 'You have exceeded your fastfood budget';
+                    setTimeout(() => { this.message = null }, 2000)
+                    return;
                 }
             }
-
+            console.log(this.totalCount)
+            this.kioskPanel = false
+            this.completeTask = true
         },
-        showMessage(text) {
-            this.message = text;
-            setTimeout(() => {
-                this.message = null;
-            }, 2000);
+        startSubTask() {
+            this.showSubInstructions = false;
+            this.showTask = true; // Opens the actual menu
+            this.message = "Welcome to the Digital Marketplace! <br> Tap the Monitor";
+            setTimeout(() => { this.message = null }, 3000);
+        },
+        async nextGame() {
+            // Deduct coins
+            updateCoins(this.cartTotal);
+
+            // Complete current building based on route
+            completeBuilding(this.$route.path, '/building/online-subscription');
+
+            // Sync progress
+            await storeGameProgress();
+            await fetchGameProgress();
+
+            // Return to map
+            this.$router.push('/map');
+        },
+        closeQuestion() {
+            this.showQuestion = false
+            this.promoQuestion = []
+            this.setEvent = null
+            this.questionError = {
+                show: false,
+                message: null
+            }
+            this.answer = null
+        },
+        generateQuestion(item) {
+            const price = item.price;
+            const ratePercent = item.rate * 100;
+
+            switch (item.logic) {
+                case 'Discount':
+                    return `  ${item.name} costs ₱${price}. A ${ratePercent}% discount is applied. What is the final price after the discount?`;
+
+                case 'Sales Tax':
+                    return `${item.name} costs ₱${price}. A ${ratePercent}% sales tax is added. What is the total price after tax?      `;
+
+                case 'Simple Interest':
+                    return `${item.name} costs ₱${price}. It has ${ratePercent}% simple interest per year for ${item.years || 1} year(s).What is the total amount to be paid?`;
+
+                case 'Commission':
+                    return `${item.name} costs ₱${price}. There is a ${ratePercent}% commission, but the buyer pays only the base price. What is the final price paid by the buyer? `;
+
+                default:
+                    return `What is the final price of ${item.name}?`;
+            }
         }
+
     }
 }
 
@@ -665,7 +413,7 @@ export default {
 .supermarket-bg {
     width: 100%;
     height: 100vh;
-    background-image: url('/assets/supermarket/supermarket.png');
+    background-image: url('/assets/online-subscription/online-subscription-bg.png');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -673,34 +421,18 @@ export default {
     overflow: hidden;
 }
 
-.stall {
+.kiosk {
     position: absolute;
-    cursor: pointer;
-    transition: all 0.2s ease-out;
-    /* Center the lock image */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.stall-image {
-    width: 20%;
-}
-
-.cart {
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-    width: 20%;
+    top: 91px;
+    left: 31%;
+    width: 15%;
+    height: 22%;
     z-index: 2;
 }
 
-.terminal {
-    position: absolute;
-    bottom: 10px;
-    left: 20px;
-    width: 10%;
-    z-index: 2;
+.paper-bag {
+    width: 20px;
+    height: 20px;
 }
 
 .atm-info {
@@ -712,6 +444,7 @@ export default {
     width: 100%;
     height: 100%;
     z-index: 7;
+    overflow-y: scroll;
 }
 
 .stall-content {
@@ -726,74 +459,6 @@ export default {
 
 .selected-stall {
     width: 70%;
-}
-
-/* --- ITEM HOTSPOT STYLING --- */
-.items-display {
-    /* This div overlays the stall image to define clickable areas */
-    pointer-events: none;
-    /* Allows clicks to pass through by default */
-}
-
-.item-hotspot {
-    position: absolute;
-    cursor: pointer;
-    pointer-events: auto;
-    /* Only the hotspots are clickable */
-    background-color: rgba(255, 255, 255, 0.2);
-    /* Invisible-ish clickable area */
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.item-hotspot:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Specific positioning for items on the PLACHOLDER stall image (adjust these based on your actual image!) */
-.item-hotspot[data-index="0"] {
-    top: 10%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="1"] {
-    top: 22%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="2"] {
-    top: 35%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="3"] {
-    top: 48%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="4"] {
-    top: 58%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
-}
-
-.item-hotspot[data-index="5"] {
-    top: 74%;
-    left: 14%;
-    width: 25%;
-    height: 13%;
 }
 
 /* --- ANIMATION CLASS (CRITICAL) --- */
@@ -850,12 +515,14 @@ export default {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .cash-receipt-container {
+    margin-top: 10%;
     width: 380px;
     /* Fixed width */
-    max-height: 90vh;
+    max-height: 1000vh;
     /* Limit the maximum height of the entire receipt on screen */
     background-color: #fdfdfd;
     /* Off-white receipt paper */
@@ -995,5 +662,54 @@ export default {
 .receipt-button-container .btn:hover {
     background-color: #0056b3;
     border-color: #0056b3;
+}
+
+.instruction-step {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    border-left: 5px solid rgba(0, 0, 0, 0.7);
+    ;
+    margin-bottom: 15px;
+}
+
+.instruction-step h5 {
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+/* Custom scrollbar for the instructions text */
+.overflow-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.7);
+    ;
+    border-radius: 10px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Ensure the stall-content is scrollable for many menu items */
+.stall-content {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.text-blue {
+    color: #007bff;
 }
 </style>

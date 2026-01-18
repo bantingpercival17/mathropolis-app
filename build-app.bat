@@ -1,4 +1,14 @@
 
+npm install @capacitor/cli@latest
+npx cap init
+
+npm install @capacitor/android
+# ADD PLATFORMS
+npx cap add android
+
+npm run build
+
+npx cap copy
 npm run build
 npx cap copy android
 npx cap run android

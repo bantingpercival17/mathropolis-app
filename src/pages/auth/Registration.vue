@@ -199,6 +199,7 @@ h2 {
     align-items: center;
     position: relative;
     height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -211,6 +212,7 @@ h2 {
 }
 
 .container {
+    top: 10px;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.9);
     /* Slightly transparent white */
@@ -221,7 +223,7 @@ h2 {
     width: 90%;
     border: 3px solid #66bb6a;
     /* Green border like the logo */
-    height: fit-content;
+    overflow-y: auto;
 }
 
 

@@ -13,6 +13,7 @@ import SuperMarketV2 from "./pages/building/Super-market.vue";
 import Registration from "./pages/auth/Registration.vue";
 import DepartmentStore from "./pages/building/DepartmentStore.vue";
 import FastFood from "./pages/building/FastFood.vue";
+import Subscription from "./pages/building/OnlineSubscription.vue"
 import TeacherView from "./pages/teacher/TeacherView.vue";
 
 const childPage = [
@@ -74,7 +75,7 @@ const routes = [
   },
   {
     path: "/building/online-subscription",
-    component: FastFood,
+    component: Subscription,
     meta: { orientation: 'landscape' }
   },
   {

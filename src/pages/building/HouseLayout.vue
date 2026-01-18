@@ -1,9 +1,10 @@
 <template>
+    <!--  <div class="coin-bg">
+        <span style="font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">₱
+            0.00</span>
+    </div> -->
     <div class="house-bg">
-        <div class="coin-bg">
-            <span style="font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">₱
-                0.00</span>
-        </div>
+
         <div class="house-layout" v-html="houseData[currentIndex].instruction" @click="handleClick">
 
         </div>
@@ -39,7 +40,7 @@
     </div>
 </template>
 <script>
-import { storeGameProgress } from '../../controller';
+import { storeGameProgress, fetchGameProgress } from '../../controller';
 
 export default {
     name: "HouseLayout",
@@ -195,7 +196,8 @@ export default {
                 localStorage.setItem('buildings', JSON.stringify(buildings));
                 await storeGameProgress();
                 // Navigate to the next page after the last instruction
-                this.navigateTo('/map');
+                await fetchGameProgress()
+                this.$router.push('/map');
             }
         },
         handleClick(event) {
@@ -256,7 +258,8 @@ export default {
     padding-left: 5%;
     position: absolute;
     width: 85%;
-    top: 15%;
+    height: 320px;
+    top: 5%;
     bottom: 15%;
     left: 5%;
     font-size: 20px;
@@ -299,7 +302,7 @@ export default {
     top: 10px;
     right: 10px;
     width: 20%;
-    height: 15%;
+    height: 40%;
     /* ... (Other styles) ... */
     text-align: center;
     /* Still useful for older browsers/fallback */
