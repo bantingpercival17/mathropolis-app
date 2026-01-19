@@ -1,6 +1,6 @@
 <template>
     <div class="supermarket-container supermarket-bg">
-        <Navbar :budgetName="this.building" :store="true" :tools="enabledTools" />
+        <Navbar :budgetName="this.building" :store="true" :tools="enabledTools" :coins="coin" />
         <div v-if="message" class="message-box bg-warning text-white text-center" v-html="message">
         </div>
         <div class="kiosk" @click="kioskPanel = true"></div>
@@ -241,6 +241,9 @@ export default {
                 return {};
             }
         },
+        coin() {
+            return parseFloat(localStorage.getItem('coin')) ?? 0;
+        },
         categories() {
             return ['All', ...Object.keys(this.menuData)];
         },
@@ -356,7 +359,7 @@ export default {
             updateCoins(this.cartTotal);
 
             // Complete current building based on route
-            completeBuilding(this.$route.path, '/building/online-subscription');
+            completeBuilding(this.$route.path, '/building/amusement');
 
             // Sync progress
             await storeGameProgress();
@@ -368,7 +371,6 @@ export default {
         closeQuestion() {
             this.showQuestion = false
             this.promoQuestion = []
-            this.setEvent = null
             this.questionError = {
                 show: false,
                 message: null
@@ -395,8 +397,59 @@ export default {
                 default:
                     return `What is the final price of ${item.name}?`;
             }
-        }
+        },
+        submitAnswer() {
+            const correctAnswer = this.calculateFinalPrice(this.promoQuestion);
 
+            const userValue = Number(this.answer);
+            const roundedCorrect = Number(correctAnswer.toFixed(2));
+            console.log(roundedCorrect)
+            if (userValue === roundedCorrect) {
+                this.addSubscriptionToCart(this.promoQuestion, roundedCorrect);
+                this.message = 'Correct! Subscription added 🎉';
+                this.closeQuestion()
+            } else {
+                this.message = 'Wrong! Try Again';
+            }
+
+            this.showQuestionModal = false;
+            setTimeout(() => (this.message = null), 2000);
+        },
+        addSubscriptionToCart(sub, finalPrice) {
+            const existingItem = this.subscriptionCart.find(item => item.code === sub.code);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                this.subscriptionCart.push({
+                    code: sub.code,
+                    name: sub.name,
+                    price: finalPrice,
+                    originalPrice: sub.price,
+                    logic: sub.logic,
+                    quantity: 1
+                });
+            }
+        },
+        calculateFinalPrice(item) {
+            switch (item.logic) {
+                case 'Discount':
+                    return item.price * (1 - item.rate);
+
+                case 'Sales Tax':
+                    return item.price * (1 + item.rate);
+
+                case 'Simple Interest':
+                    const interest = item.price * item.rate * (item.years || 1);
+                    return item.price + interest;
+
+                case 'Commission':
+                    return item.price;
+
+                default:
+                    return item.price;
+            }
+        }
     }
 }
 

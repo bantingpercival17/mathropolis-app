@@ -145,20 +145,7 @@
                             <button @click="removeFromCart(index)"
                                 class="btn btn-sm text-danger p-0 border-0">&times;</button>
                         </div>
-                        <!--  <span>{{ item.name }}</span>
-                        <span>{{ item.quantity }} x {{ formatPrice(item.price) }}</span>
-                        <span>{{ formatPrice(item.quantity * item.price) }}</span>
-                        <button @click="removeFromCart(index)"
-                            class="btn btn-sm text-danger p-0 border-0">&times;</button> -->
                     </li>
-                    <!-- <li v-for="(item, index) in cart" :key="index" class="receipt-item">
-                        <span>{{ item.name }}</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span>₱{{ item.price.toFixed(2) }}</span>
-                            <button @click="removeFromCart(index)"
-                                class="btn btn-sm text-danger p-0 border-0">&times;</button>
-                        </div>
-                    </li> -->
                 </ul>
             </div>
 
@@ -390,7 +377,7 @@ export default {
 
             // Return to map
             this.$router.push('/map');
-        }
+        },
     }
 }
 

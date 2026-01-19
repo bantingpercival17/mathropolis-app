@@ -22,7 +22,7 @@ export function saveBuildings(buildings) {
 /**
  * Update player coins safely
  */
-export function updateCoins(cost = 0) {
+export function updateCoins(cost) {
     const coin = Number(localStorage.getItem(COIN_KEY)) || 0;
     const newCoin = Math.max(coin - cost, 0);
     localStorage.setItem(COIN_KEY, newCoin);

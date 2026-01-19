@@ -14,6 +14,7 @@ import Registration from "./pages/auth/Registration.vue";
 import DepartmentStore from "./pages/building/DepartmentStore.vue";
 import FastFood from "./pages/building/FastFood.vue";
 import Subscription from "./pages/building/OnlineSubscription.vue"
+import Amusement from "./pages/building/Amusement.vue"
 import TeacherView from "./pages/teacher/TeacherView.vue";
 
 const childPage = [
@@ -28,11 +29,11 @@ const childPage = [
   },
   { path: "/map", name: 'Map', component: Map, meta: { orientation: 'landscape' } },
   { path: "/quiz/:store", component: Quiz, props: true, meta: { orientation: 'portrait' } },
-  { path: "/register", name: 'Register', component: Registration, meta: { orientation: 'portrait' } },
+  { path: "/register", name: 'Register', component: Registration, meta: { orientation: 'landscape' } },
   { path: "/login", name: 'Login', component: Login, meta: { orientation: 'landscape' } },
   { path: "/final", component: Final },
   { path: '/auth/:pathMatch(.*)*', beforeEnter: () => window.location.href = '/auth/google' },
-  { path: 'teacher', name: 'Teacher', component: TeacherView, meta: { orientation: 'portrait' } }
+  { path: 'teacher', name: 'Teacher', component: TeacherView, meta: { orientation: 'landscape' } }
 ]
 const routes = [
   {
@@ -80,7 +81,7 @@ const routes = [
   },
   {
     path: "/building/amusement",
-    component: FastFood,
+    component: Amusement,
     meta: { orientation: 'landscape' }
   },
 

@@ -1,6 +1,6 @@
 <template>
     <div class="bank-bg">
-        <Navbar budgetName="Bank" store="false" />
+        <Navbar :budgetName="building" :store="false" :tools="enabledTools" :coins="coin" />
         <!-- <div class="coin-bg">
             <span style="font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">₱
                 {{ coin }}</span>
@@ -222,20 +222,13 @@
 <script>
 import { storeGameProgress, fetchGameProgress } from '../../controller';
 import Navbar from '../Navbar.vue';
-
+import { DEFAULT_CATEGORIES } from '../../store/gameData.js'
 export default {
     name: 'BankLayout',
     components: {
         Navbar,
     },
     data() {
-        const categories = [
-            { id: 1, name: 'Supermarket', percent: 50, amount: 2500 },
-            { id: 2, name: 'Department Store', percent: 10, amount: 500 },
-            { id: 3, name: 'Restaurant', percent: 20, amount: 1000 },
-            { id: 4, name: 'Online Subscription', percent: 10, amount: 500 },
-            { id: 5, name: 'Leisure', percent: 10, amount: 500 },
-        ]
         return {
             coin: 0.00,
             mia: '/assets/mia.png',
@@ -251,7 +244,7 @@ export default {
                 new Audio('/assets/bank/bank-5.mp3')],
 
             currentSoundIndex: 0,
-            categories,
+            categories: DEFAULT_CATEGORIES,
             message: '',
             isSuccess: false,
             showConfetti: false,
@@ -267,16 +260,19 @@ export default {
             this.categories = JSON.parse(budgetPlan);
         }
     },
-    methods: {
-        navigateTo(route) {
-            let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');
-            const bank = buildings.find(item => item.name === "Supermarket");
-            if (bank) {
-                bank.isLocked = false;
+    computed: {
+        enabledTools() {
+            try {
+                const buildings = JSON.parse(localStorage.getItem('buildings')) ?? [];
+                return Object.fromEntries(
+                    buildings.map(({ name, isDone }) => [name, !!isDone])
+                );
+            } catch {
+                return {};
             }
-            localStorage.setItem('buildings', JSON.stringify(buildings));
-            this.$router.push(route);
         },
+    },
+    methods: {
         playSound(index) {
             this.currentSoundIndex = index
             const audio = this.sounds[this.currentSoundIndex]

@@ -8,9 +8,16 @@ export async function fetchGameProgress() {
             },
         }).then((response) => {
             const progressData = response.data.progress;
-            localStorage.setItem('budgetPlan', (progressData.budget_plan) || JSON.stringify(DEFAULT_CATEGORIES));
-            localStorage.setItem('buildings', (progressData.progress_data) || JSON.stringify(DEFAULT_BUILDINGS));
-            localStorage.setItem('coin', progressData.coins || '0');
+            if (progressData) {
+                localStorage.setItem('budgetPlan', (progressData.budget_plan) || JSON.stringify(DEFAULT_CATEGORIES));
+                localStorage.setItem('buildings', (progressData.progress_data) || JSON.stringify(DEFAULT_BUILDINGS));
+                localStorage.setItem('coin', progressData.coins || '0');
+            } else {
+                localStorage.setItem('budgetPlan', JSON.stringify(DEFAULT_CATEGORIES));
+                localStorage.setItem('buildings', JSON.stringify(DEFAULT_BUILDINGS));
+                localStorage.setItem('coin', 0);
+            }
+
 
         }).catch((error) => {
             if (error.status == 401) {

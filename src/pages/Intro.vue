@@ -28,63 +28,12 @@
 
 <script>
 import axios from 'axios';
+import { DEFAULT_BUILDINGS, DEFAULT_CATEGORIES } from "../store/gameData.js"
 export default {
     data() {
-        const buildings = [
-            {
-                name: "Bank",
-                route: "/building/bank",
-                style: "bottom: 40%; left: 7%; width: 15%; height: 20%;",
-                isLocked: true,
-                isDone: null
-            },
-            {
-                name: "Supermarket",
-                route: "building/supermarket",
-                style: "top: 14%; left: 23%; width: 15%; height: 20%; z-index:2",
-                isLocked: true,
-                isDone: null,
-            },
-            {
-                name: "Restaurant",
-                route: "building/fastfood",
-                style: "top: 15%; left: 56%; width: 15%; height: 20%; z-index:2",
-                isLocked: true,
-                isDone: null
-            },
-            {
-                name: "Subscription",
-                route: "/building/online-subscription",
-                style: "top: 45%; right: 13%; width: 15%; height: 20%;",
-                isLocked: true,
-                isDone: null
-            },
-            {
-                name: "House",
-                route: "building/house",
-                style: "bottom: 35%; left: 40%; width: 15%; height: 20%;",
-                isLocked: false,
-                isDone: null
-            },
-            {
-                name: "Department Store",
-                route: "/building/department-store",
-                style: "bottom: 2%; left: 23%; width: 15%; height: 20%;",
-                isLocked: true,
-                isDone: null
-            },
-            {
-                name: "Amusement",
-                route: "/building/amusement",
-                style: "bottom: 3%; right: 9%; width: 15%; height: 20%;",
-                isLocked: true,
-                isDone: null
-            },
-        ]
         return {
             username: null,
             password: null,
-            buildings,
             loader: false,
             message: null
 
@@ -123,8 +72,8 @@ export default {
                 // Save account data to localStorage
                 const { username } = response.data
                 localStorage.setItem('account', JSON.stringify(response.data))
-                localStorage.setItem('buildings', JSON.stringify(this.buildings))
-                localStorage.setItem('coin', 0)
+                /*   localStorage.setItem('buildings', JSON.stringify(this.DEFAULT_BUILDINGS))
+                  localStorage.setItem('coin', 0) */
                 if (response.data.user.isTeacher) {
                     this.$router.push("/teacher");
                 } else {

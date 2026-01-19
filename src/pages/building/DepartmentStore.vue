@@ -1,6 +1,6 @@
 <template>
     <div class="supermarket-container supermarket-bg">
-        <Navbar budgetName="Department Store" store="true" />
+        <Navbar :budgetName="building" :store="true" :tools="enabledTools" :coins="coin" />
         <div v-if="message" class="message-box bg-warning text-dark">
             {{ message }}
         </div>
@@ -343,6 +343,19 @@ export default {
         }
     },
     computed: {
+        enabledTools() {
+            try {
+                const buildings = JSON.parse(localStorage.getItem('buildings')) ?? [];
+                return Object.fromEntries(
+                    buildings.map(({ name, isDone }) => [name, !!isDone])
+                );
+            } catch {
+                return {};
+            }
+        },
+        coin() {
+            return localStorage.getItem('coin') ?? 0;
+        },
         totalCount() {
             return this.shoppingCart.reduce((acc, item) => {
                 acc.totalQuantity += item.quantity;
@@ -377,22 +390,6 @@ export default {
 
             // Return to map
             this.$router.push('/map');
-            /* const coin = localStorage.getItem('coin')
-            const totalCoin = coin - this.cartTotal
-            localStorage.setItem('coin', totalCoin)
-            let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');
-            const current = buildings.find(item => item.name === 'Department Store');
-            const next = buildings.find(item => item.name === 'Restaurant');
-            if (current) {
-                current.isLocked = true;
-                current.isDone = true;
-                next.isLocked = false
-            }
-            localStorage.setItem('buildings', JSON.stringify(buildings));
-            await storeGameProgress();
-            // Navigate to the next page after the last instruction
-            await fetchGameProgress()
-            this.$router.push('/map'); */
         },
         choiceStall(stall) {
             if (this.isReadTask) {

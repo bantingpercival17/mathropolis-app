@@ -1,12 +1,49 @@
 <template>
-    <div class="">
+    <template v-if="taskComplete">
+        <Navbar budgetName="Map" :store="false" @reset="resetGame" :tools="enabledTools" :coins="coin" />
+        <img class="mia-position" :src="mia" alt="mia character" style="" @click="playAudio">
+        <div class="mission-overlay d-flex align-items-center justify-content-center text-center">
+            <div class="container py-5 px-4 rounded-5  ">
+
+                <div class="row mb-2">
+                    <div class="col">
+                        <h4 style=" letter-spacing: 2px;font-family: 'Modak', cursive;"
+                            class=" fw-bold text-success border border-success border-3 rounded-pill py-2 bg-white bg-opacity-75">
+                            TASK COMPLETED!
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col">
+                        <div class="p-4 rounded-4 bg-white bg-opacity-90 border border-success border-3">
+                            <label class="display-2 fw-bolder text-success  mb-1" style=" letter-spacing: 2px;">
+                                CONGRATULATIONS!!!
+                            </label>
+                            <h6 class="fw-bold text-secondary text-uppercase">
+                                Allowance fully spent and mission successfully finished
+                            </h6>
+                            <button class="btn btn-sm btn-success rounded" @click="resetGame">START A NEW
+                                GAME</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="quote-box p-2 rounded-pill bg-white bg-opacity-75 border border-success border-2">
+                    <p class="fst-italic fw-bold text-success mb-0 h6">
+                        “A BUDGET IS NOT A LIMIT—IT’S A PLAN FOR YOUR GOALS.”
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </template>
+    <div v-else class="">
         <Navbar budgetName="Map" :store="false" @reset="resetGame" :tools="enabledTools" :coins="coin" />
 
         <div v-for="building in buildings" :key="building.name" :alt="building.name" class="building"
             :style="building.style" @click="goTo(building)">
             <img v-if="building.isLocked" class="lock" src="/assets/lock.png" alt="">
         </div>
-
 
         <img class="mia-position" :src="mia" alt="mia character" style="" @click="playAudio">
 
@@ -17,6 +54,10 @@
     <div v-if="message" class="message-box bg-danger text-white">
         {{ message }}
     </div>
+
+
+
+
 </template>
 
 <script scoped>
@@ -30,14 +71,16 @@ export default {
     },
     data() {
         return {
+            coin: 0.00,
             loader: false,
             mia: '/assets/mia.png',
             audioSrc: null,
-            buildings: [],
             audio1: null,
             audio2: null,
             message: '',
-            DEFAULT_BUILDINGS, DEFAULT_CATEGORIES
+            DEFAULT_BUILDINGS, DEFAULT_CATEGORIES,
+            taskComplete: false,
+            buildings: [],
         };
     },
     computed: {
@@ -51,12 +94,22 @@ export default {
                 return {};
             }
         },
-        coin() {
-            return localStorage.getItem('coin') ?? 0;
+        isAllDone() {
+            const checker = JSON.parse(localStorage.getItem('buildings')) ?? null;
+            if (checker) {
+                return checker.every(value => value.isDone !== null) ?? false;
+            }
+            return false
         }
     },
     async mounted() {
+        this.coin = parseFloat(localStorage.getItem('coin'))
+        if (this.isAllDone) {
+            this.taskComplete = true;
+            return;
+        }
         this.loadBuilding()
+
     },
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -87,16 +140,12 @@ export default {
             }
 
             try {
-                await fetchGameProgress();
-
-                const coin = localStorage.getItem('coin');
+                const data = await fetchGameProgress();
                 const buildings = JSON.parse(localStorage.getItem('buildings'));
 
                 if (buildings) {
                     this.buildings = buildings;
                 }
-
-                this.coin = coin;
 
                 if (this.$route.name === 'home') {
                     this.playAudio();
@@ -148,7 +197,7 @@ export default {
                 // Initialize storage
                 localStorage.setItem('buildings', JSON.stringify(this.DEFAULT_BUILDINGS));
                 localStorage.setItem('budgetPlan', JSON.stringify(this.DEFAULT_CATEGORIES));
-                localStorage.setItem('coin', '0');
+                localStorage.setItem('coin', 0);
                 await storeGameProgress();
                 const account = JSON.parse(localStorage.getItem('account'));
                 if (!account) {
@@ -168,7 +217,7 @@ export default {
                     this.playAudio();
                 }
 
-                this.$router.push("/map");
+                window.location.reload()
 
             } catch (error) {
                 console.error("Initialization failed:", error);
@@ -182,6 +231,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com');
+
 /* 🔑 KEY: Ensures this container fills the parent (intro-bg) and is the positioning context */
 .building-container {
     position: absolute;
@@ -292,5 +343,34 @@ export default {
     font-weight: bold;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+/* Background mimicking your game map */
+.mission-overlay {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/assets/your-city-background.png');
+    background-size: cover;
+    background-position: center;
+    position: fixed;
+    width: 100%;
+    z-index: 1050;
+}
+
+.mission-card {
+    max-width: 900px;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.fw-black {
+    font-weight: 900;
+}
+
+/* Custom styling for the "Congratulations" text stroke if needed */
+h1 {
+    -webkit-text-stroke: 2px #0dcaf0;
+    /* Bootstrap Info Color */
+    color: white;
 }
 </style>
