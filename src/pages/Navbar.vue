@@ -1,7 +1,7 @@
 <template>
     <header class="app-header">
         <button class="image-button" aria-label="Menu Button">
-            <template v-if="isMap">
+            <!-- <template v-if="isMap">
                 <div class="button-icon text-center me-4">
                     <img class="button-icon" src="/assets/map.png" alt="" @click="$router.push('/map')">
                     <p class="icon-text-badge">MAP</p>
@@ -18,8 +18,8 @@
                         PLAN
                     </p>
                 </div>
-            </template>
-            <div v-else class="button-icon text-center me-4">
+            </template> -->
+            <div v-if="!isMap" class="button-icon text-center me-4">
                 <img class="button-icon" src="/assets/user.png" alt="" @click="showProfile = true">
                 <p class=" icon-text-badge">PROFILE</p>
             </div>
@@ -27,9 +27,14 @@
         </button>
 
         <div class="coin-bg">
+
             <span style="font-size: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">₱
                 {{ coins }}
             </span>
+        </div>
+        <div v-if="isMap" class="button-tools text-center ">
+            <img class="button-icon" src="/assets/user.png" alt="" @click="showTools = true">
+            <p class=" icon-text-badge">HINTS</p>
         </div>
         <label for="" class="budget-style">{{ budget }}</label>
         <span class="">
@@ -47,7 +52,32 @@
     <Profile v-if="showProfile" @close="handleChildClose" @reset="$emit('reset')" :userTools="tools" />
     <Budget v-if="showBudget" @close="handleChildClose" />
     <Formulas v-if="showFormula" @close="handleChildClose" />
-
+    <div v-if="showTools" class="modal-content-tools">
+        <div class="d-flex flex-column align-items-center p-4">
+            <div class="container-tools">
+                <div class="d-flex  align-items-center text-center">
+                    <div class="button-icon text-center me-4">
+                        <img class="button-icon" src="/assets/map.png" alt="" @click="$router.push('/map')">
+                        <p class="icon-text-badge">MAP</p>
+                    </div>
+                    <div v-if="tools?.House" class="button-icon text-center">
+                        <img class="button-icon" src="/assets/tools/formula.png" alt="" @click="showFormulas">
+                        <p style="font-size: x-small; background-color: white;border-radius: 10%; font-weight: 900;">
+                            FORMULAS
+                        </p>
+                    </div>
+                    <div v-if="tools?.Bank" class="button-icon ms-4">
+                        <img class="button-icon" src="/assets/tools/budget-planning.png" alt="" @click="showBudgetPlan">
+                        <p style="font-size: x-small;background-color: white;border-radius: 10%; font-weight: 900;">
+                            BUDGET
+                            PLAN
+                        </p>
+                    </div>
+                </div>
+                <button class="btn btn-outline-danger w-100 mb-2" @click="showTools = false">CANCEL</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -67,6 +97,7 @@ export default {
             iconFormulaShow: false,
             iconBudgetShow: false,
             isMap: false,
+            showTools: false
         }
     },
     emits: ['close', 'reset'],
@@ -102,6 +133,14 @@ export default {
             this.showFormula = false
             this.showBudget = false
             this.showProfile = false
+        },
+        showFormulas() {
+            this.showFormula = true
+            this.showTools = false
+        },
+        showBudgetPlan() {
+            this.showBudget = true
+            this.showTools = false
         }
     }
 };
@@ -290,6 +329,17 @@ export default {
     border-radius: 5px;
 }
 
+.button-tools {
+    position: absolute;
+    right: 22%;
+    top: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
 .tool-image {
     width: 15%;
 }
@@ -354,5 +404,27 @@ export default {
     background-color: white;
     border-radius: 10%;
     font-weight: 900;
+}
+
+.modal-content-tools {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100vh;
+    z-index: 2;
+}
+
+.container-tools {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Slightly transparent white */
+    padding: 10px 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    border: 3px solid #66bb6a;
+    /* Green border like the logo */
 }
 </style>

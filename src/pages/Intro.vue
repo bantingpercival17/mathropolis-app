@@ -9,7 +9,19 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" v-model="password" required>
+
+                    <div class="row">
+                        <div class="col">
+                            <input :type="passwordType" id="password" class="form-control" v-model="password" required>
+                        </div>
+
+                        <div class="col-2">
+                            <button class="btn btn-sm btn-outline-primary" type="button"
+                                @click="togglePasswordVisibility">
+                                {{ passwordType === 'password' ? 'SHOW' : 'HIDE' }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit">Login to Play</button>
             </form>
@@ -33,6 +45,7 @@ export default {
     data() {
         return {
             username: null,
+            passwordType: 'password',
             password: null,
             loader: false,
             message: null
@@ -104,6 +117,10 @@ export default {
             setTimeout(() => {
                 this.message = null;
             }, 2000);
+        },
+        togglePasswordVisibility() {
+            this.passwordType =
+                this.passwordType === 'password' ? 'text' : 'password';
         }
     }
 };

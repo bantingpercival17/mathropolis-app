@@ -203,22 +203,113 @@ export default {
             message: null,
             selectedCategory: 'All',
             subscriptionCart: [],
-            subscriptions: [
-                { code: 1, name: "Spotify Premium", price: 150, logic: "Discount", rate: 0.10, desc: "10% student discount" },
-                { code: 2, name: "Netflix Basic", price: 200, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
-                { code: 3, name: "ML Diamonds", price: 250, logic: "Commission", rate: 0.05, desc: "5% agent commission" },
-                { code: 4, name: "Apple Music", price: 180, logic: "Simple Interest", rate: 0.10, years: 1, desc: "10% interest/year" },
-                { code: 5, name: "PlayStation Plus", price: 500, logic: "Discount", rate: 0.20, desc: "20% summer sale" },
-                { code: 6, name: "Disney+", price: 300, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
-                { code: 7, name: "YouTube Premium", price: 200, logic: "Commission", rate: 0.10, desc: "10% promoter commission" },
-                { code: 8, name: "Discord Nitro", price: 250, logic: "Simple Interest", rate: 0.08, years: 2, desc: "8% interest for 2 years" },
-                { code: 9, name: "Roblox Premium", price: 400, logic: "Discount", rate: 0.15, desc: "15% off" },
-                { code: 10, name: "Canva Pro", price: 500, logic: "Commission", rate: 0.05, desc: "5% affiliate commission" },
-                { code: 11, name: "Deezer", price: 180, logic: "Simple Interest", rate: 0.10, years: 2, desc: "10% interest for 2 years" },
-                { code: 12, name: "Xbox Game Pass", price: 450, logic: "Discount", rate: 0.10, desc: "10% off" },
-                { code: 13, name: "TikTok Premium", price: 250, logic: "Sales Tax", rate: 0.12, desc: "12% sales tax" },
-                { code: 14, name: "Adobe Creative Cloud", price: 500, logic: "Simple Interest", rate: 0.06, years: 3, desc: "6% interest for 3 years" },
-                { code: 15, name: "Zoom Premium", price: 120, logic: "Discount", rate: 0.05, desc: "5% student discount" }
+           subscriptions: [
+                {
+                    code: 1,
+                    name: "Spotify Premium",
+                    price: 166.67,
+                    logic: "Discount",
+                    rate: 0.10,
+                    finalPrice: 150.00,
+                    desc: "10% student discount"
+                },
+                {
+                    code: 2,
+                    name: "Mobile Legends Diamonds",
+                    price: 263.16,
+                    logic: "Commission",
+                    rate: 0.05,
+                    commission: 13.16,
+                    finalPrice: 250.00,
+                    desc: "5% agent commission"
+                },
+                {
+                    code: 3,
+                    name: "Canva Pro",
+                    price: 263.16,
+                    logic: "Commission",
+                    rate: 0.05,
+                    commission: 13.16,
+                    finalPrice: 250.00,
+                    desc: "5% affiliate commission"
+                },
+                {
+                    code: 4,
+                    name: "Netflix Basic",
+                    price: 446.43,
+                    logic: "Sales Tax",
+                    rate: 0.12,
+                    finalPrice: 500.00,
+                    desc: "12% sales tax"
+                },
+                {
+                    code: 5,
+                    name: "Disney+",
+                    price: 446.43,
+                    logic: "Sales Tax",
+                    rate: 0.12,
+                    finalPrice: 500.00,
+                    desc: "12% sales tax"
+                },
+                {
+                    code: 6,
+                    name: "PlayStation Plus",
+                    price: 937.50,
+                    logic: "Discount",
+                    rate: 0.20,
+                    finalPrice: 750.00,
+                    desc: "20% discount"
+                },
+                {
+                    code: 7,
+                    name: "Xbox Game Pass",
+                    price: 833.33,
+                    logic: "Discount",
+                    rate: 0.10,
+                    finalPrice: 750.00,
+                    desc: "10% discount"
+                },
+                {
+                    code: 8,
+                    name: "Discord Nitro",
+                    price: 2314.81,
+                    logic: "Simple Interest",
+                    rate: 0.08,
+                    years: 2,
+                    interest: 370.37,
+                    finalPrice: 2685.18,
+                    desc: "8% interest for 2 years"
+                },
+                {
+                    code: 9,
+                    name: "YouTube Premium",
+                    price: 222.22,
+                    logic: "Commission",
+                    rate: 0.10,
+                    commission: 22.22,
+                    finalPrice: 200.00,
+                    desc: "10% commission (split)"
+                },
+                {
+                    code: 10,
+                    name: "Zoom Premium",
+                    price: 120.00,
+                    logic: "Discount",
+                    rate: 0.05,
+                    finalPrice: 114.00,
+                    desc: "5% discount"
+                },
+                {
+                    code: 11,
+                    name: "Deezer",
+                    price: 1636.36,
+                    logic: "Simple Interest",
+                    rate: 0.10,
+                    years: 2,
+                    interest: 327.27,
+                    finalPrice: 1963.63,
+                    desc: "10% interest for 2 years"
+                }
             ],
             showQuestion: false,
             promoQuestion: [],
@@ -339,7 +430,7 @@ export default {
                     setTimeout(() => { this.message = null }, 2000)
                     return;
                 } else {
-                    this.message = 'You have exceeded your fastfood budget';
+                    this.message = 'You have exceeded your Online Subscription budget';
                     setTimeout(() => { this.message = null }, 2000)
                     return;
                 }

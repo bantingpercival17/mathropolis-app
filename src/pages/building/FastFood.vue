@@ -46,7 +46,7 @@
                     <h2 class="text-danger fw-bold m-0">4 SISTER'S MENU</h2>
                     <button class="btn btn-sm btn-outline-secondary" @click="kioskPanel = false">Close</button>
                 </div>
-                <div class="row">
+                <div class="row overflow-auto">
                     <!-- Food Items -->
                     <div class="col-7">
                         <div class="d-flex gap-2 overflow-auto pb-3 mb-3 no-scrollbar">
@@ -81,7 +81,7 @@
                     </div>
                     <div class="col-5 col-4 m-0 p-0">
                         <label for="" class="fw-bolder text-center text-danger">FOOD CART</label>
-                        <div class="text-start mb-4 overflow-auto" style="height: 130px;">
+                        <div class="text-start mb-4 overflow-auto" style="height: 130px; overflow-y: scroll;">
                             <template v-if="foodCart.length > 0">
                                 <div class="instruction-step mb-3 p-1 d-flex justify-content-between align-items-center bg-light rounded-3"
                                     v-for="item in foodCart" :key="item.code">
@@ -436,6 +436,7 @@ export default {
     width: 98%;
     height: 95%;
     z-index: 7;
+    overflow-y: scroll;
 }
 
 .selected-stall {

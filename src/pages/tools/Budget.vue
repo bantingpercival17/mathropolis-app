@@ -83,6 +83,7 @@ export default {
     width: 100%;
     height: 100vh;
     z-index: 100;
+    overflow-y: scroll;
 }
 
 /* Clipboard Styles */

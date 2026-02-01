@@ -56,7 +56,7 @@
 
         </div>
         <div v-if="showStalls" class="stall-content">
-            <div class="row p-4 align-items-start position-relative z-1">
+            <div class="row align-items-start position-relative z-1">
                 <!-- LEFT COL: Clipboard -->
                 <div class="left-content col-sm-6 col-xs-6 d-flex flex-column align-items-center">
                     <img class="selected-stall" :src="this.stallContent.image" alt="">
@@ -143,6 +143,10 @@
                                 </small>
                             </div>
                             <div class="d-flex align-items-center">
+                                <button @click="addItemFromCart(cartItem)"
+                                    class="btn btn-sm text-success hover:text-success rounded-circle lh-1 fs-5">
+                                    &plus;
+                                </button>
                                 <span class="me-2 fw-semibold fs-6">
                                     ₱{{ (cartItem.quantity * (cartItem.price)).toFixed(2) }}
                                 </span>
@@ -704,6 +708,22 @@ export default {
                 clone.remove();
             }, { once: true });
         },
+        addItemFromCart(item) {
+            const index = this.shoppingCart.findIndex(
+                i => i.code === item.code
+            );
+
+            if (index !== -1) {
+                // item already in cart → increase quantity
+                this.shoppingCart[index].quantity++;
+            } else {
+                // item not in cart → add it
+                this.shoppingCart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+        },
         removeItemFromCart(item) {
             const index = this.shoppingCart.findIndex(i => i.code === item.code);
             if (index !== -1) {
@@ -879,7 +899,7 @@ export default {
 }
 
 .selected-stall {
-    width: 58%;
+    width: 63%;
 }
 
 /* --- ITEM HOTSPOT STYLING --- */

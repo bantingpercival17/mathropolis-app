@@ -13,20 +13,30 @@
             </div>
             <div v-else class="atm-info text-center">
                 <div v-if="!openWithdraw" class="first">
+                    <span
+                        style="width: 25%; height: 15%;position: absolute; left: 30%; bottom: 65%; font-weight: bolder; text-align:center;">
+                        {{ userName }}
+                    </span>
                     <span @click="openWithdraw = true"
                         style="width: 10%; height: 20%;position: absolute; left: 45%; bottom: 55%; z-index: 7"></span>
-                    <img style="width: 50%; background-size: cover;
+                    <img style="width: 80%; background-size: cover;
     background-repeat: no-repeat; " src="/assets/bank/bank-1.png" alt="">
-                    <button class="btn btn-danger" style="position: absolute; z-index: 7; left: 30%; bottom: 35%;"
+
+                    <button class="btn btn-danger btn-sm"
+                        style="position: absolute; z-index: 7; left: 57%; bottom: 50%;"
                         @click="withdrawPanel = false">CANCEL</button>
                 </div>
                 <div v-else class="first">
-                    <span class="get-coin" @click="getCoin"
-                        style="width: 5%; height: 15%;position: absolute; right: 38%; bottom: 10%; background-color: aqua;z-index: 7">GET
-                        COIN</span>
-                    <img style="width: 50%; background-size: cover;
+                    <span
+                        style="width: 25%; height: 15%;position: absolute; left: 30%; bottom: 65%; font-weight: bolder; text-align:center;">
+                        {{ userName }}
+                    </span>
+                    <img style="width: 80%; background-size: cover;
     background-repeat: no-repeat; " src="/assets/bank/bank-2.png" alt="">
-                    <button class="btn btn-danger" style="position: absolute; z-index: 7; left: 30%; bottom: 35%;"
+                    <button class="btn btn-info btn-sm" style="position: absolute; z-index: 7; left: 57%; bottom: 70%;"
+                        @click="getCoin">GET COIN</button>
+                    <button class="btn btn-secondary btn-sm"
+                        style="position: absolute; z-index: 7; left: 57%; bottom: 60%;"
                         @click="openWithdraw = false">BACK</button>
                 </div>
             </div>
@@ -271,6 +281,14 @@ export default {
                 return {};
             }
         },
+        userName() {
+            try {
+                const user = JSON.parse(localStorage.getItem('account')) ?? [];
+                return user.user.name
+            } catch {
+                return 'Unknown';
+            }
+        }
     },
     methods: {
         playSound(index) {

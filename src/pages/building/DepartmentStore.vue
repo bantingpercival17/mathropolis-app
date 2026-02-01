@@ -61,15 +61,18 @@
                 <!-- LEFT COL: Clipboard -->
                 <div class="left-content col-sm-6 col-xs-6 d-flex flex-column align-items-center">
                     <div class="stall-container position-relative">
-                        <img class="selected-stall" :src="stallContent.image" alt="Stall Image">
+                        <img class="selected-stall" :src="stallContent.image" alt="Stall Image"
+                            :style="{ width: stallContent.size }">
+                        <!--  <h2>{{ stallContent.size }}</h2> -->
                         <div class="items-display position-absolute w-100 h-100" style="top: 0; left: 0;">
                             <div v-for="(item, index) in stallContent.items" :key="index" class="item-hotspot" :style="{
                                 top: item.top,
                                 left: item.left,
                                 width: item.width,
-                                height: item.height
+                                height: item.height,
+                                fontAlign: 'center'
                             }" @click="addToCartWithAnimation(item, $event)">
-                                <span class="debug-label">{{ item.name }}</span>
+                                <!-- <span class="badge bg-info">{{ item.name }}</span> -->
                             </div>
                         </div>
                     </div>
@@ -112,6 +115,10 @@
                                 </small>
                             </div>
                             <div class="d-flex align-items-center">
+                                <button @click="addItemFromCart(cartItem)"
+                                    class="btn btn-sm text-primary hover:text-primary rounded-circle lh-1 fs-5">
+                                    &plus;
+                                </button>
                                 <span class="me-2 fw-semibold fs-6">
                                     ₱{{ (cartItem.quantity * (cartItem.price)).toFixed(2) }}
                                 </span>
@@ -239,6 +246,7 @@ export default {
             stalls: [{
                 image: '/assets/department-store/stall-1.png',
                 position: 'bottom: 1%; left: 23%;z-index:1; ',
+                size: '100%',
                 items: [
                     { code: 101, name: 'Eyeshadow Palette (Large)', price: 395.00, promo: 0, top: '13%', left: '5%', width: '40%', height: '12%' },
                     { code: 102, name: 'Eyeshadow Palette (Small)', price: 245.00, promo: 0, top: '13%', left: '55%', width: '40%', height: '12%' },
@@ -257,6 +265,7 @@ export default {
             {
                 image: '/assets/department-store/stall-2.png',
                 position: 'bottom: 1%; left: 51%;z-index:1;',
+                size: '100%',
                 items: [
                     { code: 201, name: 'Perfume', price: 1755.00, promo: 0.20, top: '10%', left: '5%', width: '90%', height: '18%' },
                     { code: 202, name: 'Bag 1 (Pink)', price: 300.00, promo: 0, top: '28%', left: '5%', width: '28%', height: '18%' },
@@ -277,6 +286,7 @@ export default {
             {
                 image: '/assets/department-store/stall-3.png',
                 position: 'bottom: 1%; left: 69%; z-index:1;',
+                size: '100%',
                 items: [
                     { code: 301, name: 'Socks Set 1', price: 245.00, promo: 0, top: '12%', left: '5%', width: '40%', height: '12%' },
                     { code: 302, name: 'Socks Set 2', price: 245.00, promo: 0, top: '12%', left: '55%', width: '40%', height: '12%' },
@@ -297,36 +307,39 @@ export default {
             {
                 image: '/assets/department-store/stall-4.png',
                 position: 'top: 10%; left: 3%;z-index:1;',
+                size: '130%',
                 items: [
-                    { code: 501, name: 'Tops 1 (Yellow)', price: 200.00, promo: 0, top: '30%', left: '5%', width: '22%', height: '25%' },
-                    { code: 502, name: 'Tops 2 (Pink/Brown)', price: 250.00, promo: 0, top: '30%', left: '28%', width: '18%', height: '25%' },
-                    { code: 503, name: 'Blouse (Peach/Purple)', price: 275.00, promo: 0, top: '30%', left: '46%', width: '25%', height: '25%' },
-                    { code: 504, name: 'Dress (White/Black/Red)', price: 350.00, promo: 0, top: '30%', left: '72%', width: '23%', height: '45%' },
-                    { code: 505, name: 'Folded Shirts (Left Stack)', price: 150.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
-                    { code: 506, name: 'Folded Shirts (Middle Stack)', price: 150.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
-                    { code: 507, name: 'Folded Shirts (Right Stack)', price: 150.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' }
+                    { code: 501, name: 'Tops 1 (Yellow)', price: 200.00, promo: 0, top: '30%', left: '5%', width: '32%', height: '25%' },
+                    { code: 502, name: 'Tops 2 (Pink/Brown)', price: 250.00, promo: 0, top: '30%', left: '38%', width: '28%', height: '25%' },
+                    { code: 503, name: 'Blouse (Peach/Purple)', price: 275.00, promo: 0, top: '30%', left: '66%', width: '25%', height: '25%' },
+                    { code: 504, name: 'Dress (White/Black/Red)', price: 350.00, promo: 0, top: '30%', left: '92%', width: '33%', height: '45%' },
+                    /*  { code: 505, name: 'Folded Shirts (Left Stack)', price: 150.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
+                     { code: 506, name: 'Folded Shirts (Middle Stack)', price: 150.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
+                     { code: 507, name: 'Folded Shirts (Right Stack)', price: 150.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' } */
                 ]
             },
             {
                 image: '/assets/department-store/stall-5.png',
                 position: 'top: 5%; left: 43%;z-index:1;',
+                size: '130%',
                 items: [
-                    { code: 601, name: 'Shirt', price: 380.00, promo: 0.10, top: '28%', left: '5%', width: '35%', height: '30%' },
-                    { code: 602, name: 'Hoodie', price: 200.00, promo: 0, top: '28%', left: '40%', width: '20%', height: '30%' },
-                    { code: 603, name: 'Long Sleeve / Suit', price: 450.00, promo: 0, top: '28%', left: '62%', width: '33%', height: '33%' },
-                    { code: 604, name: 'Folded Shirts (Left)', price: 120.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
-                    { code: 605, name: 'Folded Shirts (Middle)', price: 120.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
-                    { code: 606, name: 'Folded Shirts (Right)', price: 120.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' }
+                    { code: 601, name: 'Shirt', price: 380.00, promo: 0.10, top: '28%', left: '5%', width: '45%', height: '30%' },
+                    { code: 602, name: 'Hoodie', price: 200.00, promo: 0, top: '28%', left: '50%', width: '30%', height: '30%' },
+                    { code: 603, name: 'Long Sleeve / Suit', price: 450.00, promo: 0, top: '28%', left: '82%', width: '43%', height: '33%' },
+                    /*   { code: 604, name: 'Folded Shirts (Left)', price: 120.00, promo: 0, top: '63%', left: '5%', width: '15%', height: '15%' },
+                      { code: 605, name: 'Folded Shirts (Middle)', price: 120.00, promo: 0, top: '65%', left: '21%', width: '15%', height: '13%' },
+                      { code: 606, name: 'Folded Shirts (Right)', price: 120.00, promo: 0, top: '68%', left: '37%', width: '13%', height: '10%' } */
                 ]
             }, {
                 image: '/assets/department-store/stall-6.png',
-                position: 'top:5%; left: 65%;z-index:1;',
+                position: 'top:15%; left: 65%;z-index:1;',
+                size: '130%',
                 items: [
-                    { code: 401, name: 'Long Skirts', price: 500.00, promo: 0.20, top: '22%', left: '3%', width: '48%', height: '35%' },
-                    { code: 402, name: 'Pants', price: 1700.00, promo: 0, top: '22%', left: '50%', width: '45%', height: '35%' },
-                    { code: 403, name: 'Women\'s Short', price: 400.00, promo: 0, top: '58%', left: '5%', width: '30%', height: '18%' },
-                    { code: 404, name: 'Skirts', price: 500.00, promo: 0, top: '58%', left: '36%', width: '28%', height: '18%' },
-                    { code: 405, name: 'Men\'s Pants', price: 700.00, promo: 0, top: '58%', left: '65%', width: '30%', height: '22%' }
+                    { code: 401, name: 'Long Skirts', price: 500.00, promo: 0.20, top: '22%', left: '3%', width: '68%', height: '35%' },
+                    { code: 402, name: 'Pants', price: 1700.00, promo: 0, top: '22%', left: '70%', width: '55%', height: '35%' },
+                    { code: 403, name: 'Women\'s Short', price: 400.00, promo: 0, top: '58%', left: '5%', width: '40%', height: '18%' },
+                    { code: 404, name: 'Skirts', price: 500.00, promo: 0, top: '58%', left: '46%', width: '38%', height: '18%' },
+                    { code: 405, name: 'Men\'s Pants', price: 700.00, promo: 0, top: '58%', left: '85%', width: '40%', height: '22%' }
                 ]
             }],
             shoppingCart: [],
@@ -525,6 +538,22 @@ export default {
                 clone.remove();
             }, { once: true });
         },
+        addItemFromCart(item) {
+            const index = this.shoppingCart.findIndex(
+                i => i.code === item.code
+            );
+
+            if (index !== -1) {
+                // item already in cart → increase quantity
+                this.shoppingCart[index].quantity++;
+            } else {
+                // item not in cart → add it
+                this.shoppingCart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+        },
         removeItemFromCart(item) {
             const index = this.shoppingCart.findIndex(i => i.code === item.code);
             if (index !== -1) {
@@ -691,7 +720,7 @@ export default {
 }
 
 .selected-stall {
-    width: 100%;
+    /*  width: 100%; */
     /* Fill the container */
     display: block;
 }
@@ -705,23 +734,23 @@ export default {
     cursor: pointer;
     pointer-events: auto;
     background-color: rgba(255, 0, 0, 0.1);
-    /* Slightly red so you can see it while testing */
     border: 1px dashed rgba(255, 255, 255, 0.5);
     transition: transform 0.1s, background-color 0.2s;
 }
 
 .item-hotspot:active {
     transform: scale(0.95);
-    /* Mobile-friendly feedback */
     background-color: rgba(255, 255, 255, 0.4);
 }
 
 .debug-label {
+    text-align: center;
     font-size: 8px;
-    color: white;
+    font-weight: 900;
+    color: rgb(234, 255, 0);
     pointer-events: none;
     /* Make sure text doesn't block the click */
-    opacity: 0.5;
+    /* opacity: 0.5; */
 }
 
 .close-task {

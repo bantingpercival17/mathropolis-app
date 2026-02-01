@@ -15,6 +15,8 @@ npx cap run android
 
 
 
+
+
 # First option to build a Mobile Application
 npm run build
 npx cap copy

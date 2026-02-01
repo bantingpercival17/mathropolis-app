@@ -104,10 +104,7 @@ export default {
     },
     async mounted() {
         this.coin = parseFloat(localStorage.getItem('coin'))
-        if (this.isAllDone) {
-            this.taskComplete = true;
-            return;
-        }
+
         this.loadBuilding()
 
     },
@@ -142,7 +139,10 @@ export default {
             try {
                 const data = await fetchGameProgress();
                 const buildings = JSON.parse(localStorage.getItem('buildings'));
-
+                const isDone = this.isAllBuildingDone();
+                if (isDone) {
+                    this.taskComplete = true;
+                }
                 if (buildings) {
                     this.buildings = buildings;
                 }
@@ -189,6 +189,13 @@ export default {
                 this.audio2.pause();
                 this.audio2.currentTime = 0;
             }
+        },
+        isAllBuildingDone() {
+            const checker = JSON.parse(localStorage.getItem('buildings')) ?? null;
+            if (checker) {
+                return checker.every(value => value.isDone !== null) ?? false;
+            }
+            return false
         },
         async resetGame() {
             this.loader = true;

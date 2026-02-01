@@ -8,7 +8,7 @@
         <div class="house-layout" v-html="houseData[currentIndex].instruction" @click="handleClick">
 
         </div>
-        <a v-if="currentIndex < houseData.length - 1" class="next-button-v2" @click="nextInstruction">
+        <a v-if="currentIndex < /* houseData.length - 1 */3" class="next-button-v2" @click="nextInstruction">
             <svg width="110" height="34" viewBox="0 0 110 34" xmlns="http://www.w3.org/2000/svg" role="img"
                 aria-label="Next">
                 <rect x="0" y="0" width="110" height="34" rx="17" fill="#008f66" />
@@ -23,7 +23,7 @@
             </svg>
 
         </a>
-        <a v-else class="next-button-v2" @click="nextInstruction">
+        <a v-if="currentIndex === (houseData.length - 1)" class="next-button-v2" @click="nextInstruction">
             <svg width="160" height="50" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
                 <rect width="160" height="50" rx="25" fill="#00C08B" />
                 <polygon points="20,15 20,35 38,25" fill="white" />
@@ -186,6 +186,9 @@ export default {
         async nextInstruction() {
             if (this.currentIndex < this.houseData.length - 1) {
                 this.currentIndex++;
+                if (this.currentIndex === 3) {
+                    this.currentIndex = this.houseData.length - 1
+                }
                 this.playCurrentAudio();
             } else {
                 let buildings = JSON.parse(localStorage.getItem('buildings') || '[]');

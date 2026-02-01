@@ -101,7 +101,54 @@
                     </div>
                 </div>
             </div>
+            <div v-if="showTask1" class=" atm-info task-content">
+                <div class="p-4 align-items-start position-relative z-1">
+                    <div class="right-content d-flex flex-column gap-4">
+                        <!-- Instructions Card -->
+                        <div class="card border-0 shadow-lg position-relative"
+                            style="width:50%;border: 4px solid #e5e7eb; left: 25%;">
+                            <!-- Visual tab on left -->
+                            <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
+                                style="width: 10px; height: 40px; left: -14px;"></div>
+
+                            <div class="card-body p-4">
+                                <div class="close-task" @click="closeTask">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                                <h6 class="card-title fw-black border-bottom border-dark d-inline-block pb-1 mb-3">
+                                    FINAL TASK:
+                                </h6>
+
+                                <div class="card-text text-secondary-emphasis">
+                                    <p>
+                                        Allocate the assigned percentage of your budget for Amusement Park expenses.
+                                    </p>
+
+                                    <div class="alert alert-info border-start border-info border-4 rounded mb-0 ">
+                                        <p class="fw-bold d-flex align-items-center gap-2 mb-2">
+                                            INSTRUCTION:
+                                        </p>
+                                        <p class="small mb-1">Tap the ticket booth to view the available menus.</p>
+                                    </div>
+                                </div>
+                                <button @click="showTask1 = false"
+                                    class="btn btn-sm btn-info w-100 rounded mt-4 text-white fw-bold">
+                                    START THE GAME
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
+
     </template>
     <template v-else>
         <div class="amusement-bg">
@@ -182,6 +229,44 @@
                 </div>
 
             </div>
+            <div v-if="showTask2" class=" atm-info task-content">
+                <div class="p-4 align-items-start position-relative z-1">
+                    <div class="right-content d-flex flex-column gap-4">
+                        <!-- Instructions Card -->
+                        <div class="card border-0 shadow-lg position-relative"
+                            style="width:50%;border: 4px solid #e5e7eb; left: 25%;">
+                            <!-- Visual tab on left -->
+                            <div class="position-absolute top-0 start-0 mt-4 ms-n3 bg-secondary rounded-end border border-secondary"
+                                style="width: 10px; height: 40px; left: -14px;"></div>
+
+                            <div class="card-body p-4">
+                                <div class="close-task" @click="closeTask">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18 6L6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path d="M6 6L18 18" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                                <div class="card-text text-secondary-emphasis">
+                                    <div class="alert alert-danger border-start border-danger border-4 rounded mb-0 ">
+                                        <p class="fw-bold d-flex align-items-center gap-2 mb-2">
+                                            INSTRUCTION:
+                                        </p>
+                                        <p class="small mb-1">Tap the rides to answer the questions.</p>
+                                    </div>
+                                </div>
+                                <button @click="showTask2 = false"
+                                    class="btn btn-sm btn-danger w-100 rounded mt-4 text-white fw-bold">
+                                    START THE GAME
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </template>
 
@@ -209,6 +294,8 @@ export default {
             loader: false,
             intro: true,
             showTicketBooth: false,
+            showTask1: true,
+            showTask2: false,
             showReceipt: false,
             isReadTask: true,
             message: '',
@@ -396,7 +483,7 @@ export default {
                 this.intro = false
                 // Here you would integrate your budget deduction logic
                 this.message = "Payment Successful! Tickets Printing...";
-
+                this.showTask2 = true
 
                 // Reset state after success
                 setTimeout(() => {
